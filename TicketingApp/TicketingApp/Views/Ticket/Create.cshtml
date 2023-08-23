@@ -1,0 +1,33 @@
+﻿@model List<TicketingApp.Models.TicketCategory>
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1 class="mb-2">Select Category</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Service</th>
+            <th>Service Category</th> 
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cat in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => cat.Category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => cat.SubCategory)
+                </td>                            
+                <td>
+                    <a asp-action="CreateTicket" asp-route-category_id="@cat.CategoryId" class="btn btn-outline-primary btn-sm"><i class="bi bi-arrow-right-square-fill"> </i>  Create</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

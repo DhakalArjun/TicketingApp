@@ -1,0 +1,41 @@
+﻿@model TicketingApp.Controllers.AppUserController.UpdateUserRoleViewModel
+@*
+@page
+@model UpdateUserRoleViewModel
+*@
+@{
+    ViewData["Title"] = "UpdateUserRole";
+}
+
+<h1>UpdateUserRole</h1>
+<div class="col-md-6">
+    <form id="profile-form" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+        <div class="form-floating mb-3">
+            <input asp-for="@Model.UserId" class="form-control text-black" placeholder="Please choose your username." disabled />
+            <label asp-for="@Model.UserId" class="form-label text-dark"></label>
+        </div>
+        <div class="form-floating mb-3">
+            <input asp-for="@Model.UserName" class="form-control text-black" placeholder="Please choose your username." disabled />
+            <label asp-for="@Model.UserName" class="form-label text-dark"></label>
+        </div>
+        
+        <div class="form-floating mb-3">
+            <input asp-for="@Model.CurrentRole" class="form-control text-black" placeholder="Please enter your last name." disabled />
+            <label asp-for="@Model.CurrentRole" class="form-label text-dark"></label>
+        </div> 
+        <div class="form-floating mb-3">            
+            <select asp-for="@Model.NewRole" class="form-select" aria-label="Floating label select example">
+                <option value="">Select New Role</option>
+                @foreach (var item in Model.AllRoles)
+                {
+                    <option value="@item.Name">@item.Name</option>
+                }
+            </select>
+            <label asp-for="@Model.NewRole" for="floatingSelect" class="text-dark"></label>
+            <span asp-validation-for="@Model.NewRole" class="text-danger"></span>            
+        </div>       
+        <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+    </form>
+</div>
+

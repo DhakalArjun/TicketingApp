@@ -1,0 +1,98 @@
+https://johnabbott-my.sharepoint.com/:w:/g/personal/6213750_johnabbottcollege_net/EUnT6xHBZnxDouf4djpUhCMBHdnZPDIsk5OVHVDzvc-FuQ?e=gMbm2H
+
+2023/08/16 Delara
+Done / Not done since the last scrum:
+Created a proposal ,DB , github Repo: Done
+To do until next Scrum:  fundamentals of ASP.NET Core completed
+Complete Database
+Need assistance / figure things out:
+Business Roles 
+
+2023/08/16 Arjun
+1. Done / not done since last scrum:
+2. To do until next Scrum: To study fundamental of ASP.NET Core
+3. Need assistance / figure things out:
+
+2023/08/16 Debora
+1. Done / not done since last scrum:
+2. To do until next Scrum: To study fundamental of ASP.NET Core
+
+3. Need assistance / figure things out:
+
+2023/08/16 Alex
+1. Done / not done since last scrum:  
+2. To do until next Scrum: To study fundamental of ASP.NET Core
+3. Need assistance / figure things out:
+
+==============================================
+2023/08/17 Delara
+1. Done / not done since last scrum: not complete
+start with user(model)
+2. To do until next Scrum: Continue learn ASP.NET Core
+learning about .core
+3. Need assistance / figure things out:
+Authentication
+
+2023/08/17  Arjun
+1. Done / not done since last scrum: not complete
+2. To do until next Scrum:Continue learn ASP.NET Core
+3. Need assistance / figure things out:
+
+2023/08/17 Mihai
+1. Done / not done since last scrum: not complete
+2. To do until next Scrum:Continue learn ASP.NET Core
+3. Need assistance / figure things out:
+
+2023/08/17 Debora
+1. Done / not done since last scrum: Not complete
+2. To do until next Scrum: Continue learn ASP.NET Core
+3. Need assistance / figure things out:
+
+===============================================
+2023/08/21 Delara
+1. Done / not done since last scrum:  fundamentals of ASP.NET Core completed
+start with user(model)
+2. To do until next Scrum: Create Email service and class, Account verfication, reset password
+learning about .core
+3. Need assistance / figure things out:
+Authentication
+
+2023/08/21  Arjun
+1. Done / not done since last scrum: fundamentals of ASP.NET Core completed
+2. To do until next Scrum: Finalize database for Application, seed data for lookup tables,  CRUD for lookup tables, create UseCase diagram and Ticket Handling Flowchart
+3. Need assistance / figure things out:
+
+2023/08/21 Mihai
+1. Done / not done since last scrum:  Not complete
+2. To do until next Scrum:  Continue learn ASP.NET Core
+3. Need assistance / figure things out:
+
+2023/08/21 Debora
+1. Done / not done since last scrum: Not complete
+2. To do until next Scrum:  Continue learn ASP.NET Core
+3. Need assistance / figure things out:
+
+===============================================
+2023/08/22 Delara
+1. Done / not done since last scrum:  Completed
+start with user(model)
+2. To do until next Scrum: Admin CRUD for TicketCategories and TicketLocations, add necessary views
+3. Need assistance / figure things out:
+Authentication
+
+2023/08/22  Arjun
+1. Done / not done since last scrum: fundamentals of ASP.NET Core completed
+2. To do until next Scrum: CRUD for Ticket Table, add necessary views for all, admin/manager, agent and user roles, Create database on Azure and Deploy app
+3. Need assistance / figure things out: learn how to create database and deploy on Azure
+
+2023/08/22 Mihai
+1. Done / not done since last scrum:  Not complete
+2. To do until next Scrum:  Continue learn ASP.NET Core, Work on Style of Registraion, login, profile pages
+3. Need assistance / figure things out:
+
+2023/08/22 Debora
+1. Done / not done since last scrum: Not complete
+2. To do until next Scrum:  Continue learn ASP.NET Core, CRUD for Comment table
+3. Need assistance / figure things out:
+
+===============================================

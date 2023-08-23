@@ -1,0 +1,118 @@
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# User-specific files
+*.suo
+*.user
+*.userprefs
+.vscode/
+
+# Packages
+*.nupkg
+*.pfx
+*.snk
+
+# The bin and obj directories are used by Visual Studio to store build output
+# and object files.
+bin/
+obj/
+
+# Visual Studio Code directories
+.vscode/
+
+# Rider directories
+.idea/
+
+# User-specific files
+*.rsuser
+*.suo
+*.sln.iml
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet
+nuget.exe
+nuget/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+*.nuget.props
+*.nuget.targets
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# Visual Studio for Mac
+.vscode/
+.vscode-cached/
+
+# User-specific files
+*.userprefs
+*.usertasks
+
+# Rider
+.idea/
+.idea-caches/
+.ideaCodeStyles/
+*.sln.iml
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+.vscode-cached/
+
+# Rider directories
+.idea/
+.idea-caches/
+
+# User-specific files
+*.userprefs
+
+# User-specific files
+*.suo
+*.user
+*.sln.iml
+*.userprefs
+*.vscode-cached/
+*.vscode-server/
+
+# Rider
+.idea/
+.idea-caches/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# Exclude environment-specific appsettings files
+!TicketingApp/TicketingApp/appsettings.Development.json
+!TicketingApp/TicketingApp/appsettings.json
+

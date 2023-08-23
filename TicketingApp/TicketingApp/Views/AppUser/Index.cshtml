@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+<div class="text-end">
+    <a asp-action="CreateUser" class="btn btn-primary my-2"><i class="bi bi-plus-circle-dotted"></i> Create New User</a>
+</div>
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>User Name</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Action</th>
+           
+           
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var usr in ViewBag.AppUserRoles)
+        {
+            <tr>
+                <td>@usr.Id</td>
+                <td>@usr.UserName</td>
+                <td>@usr.FirstName @usr.LastName</td> 
+                <td>@usr.Name</td>
+                <td>
+                    <a asp-controller="AppUser" asp-action="UpdateUserRole" asp-route-userId="@usr.Id" class="btn btn-outline-primary btn-sm mx-2"><i class="bi bi-pencil-square"></i> Edit</a>
+                    <a href="#" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Delete</a>
+                </td> 
+            </tr>
+        }
+    </tbody>
+</table>
+
+

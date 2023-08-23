@@ -1,0 +1,73 @@
+﻿@model TicketingApp.Controllers.TicketController.MyViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+<h1>Create Ticket</h1>
+<hr />
+<div class="row">
+    <div class="col-12">
+        <form asp-action="CreateTicket" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="col-md-5">
+                    <label class="form-label">Service</label>
+                    <input class="form-control text-dark" value="@Model.Category.Category" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Category</label>
+                    <input class="form-control text-dark" value="@Model.Category.SubCategory" disabled>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="col-md-5">
+                    <label asp-for="SelectedLocation" for="floatingSelect" class="">Location</label>
+                    <select asp-for="SelectedLocation" class="form-select" aria-label="Floating label select example" value="SelectedLocation">
+                        <option value="">Select a Location</option>
+                        @foreach (var loc in @ViewBag.Locations)
+                        {
+                            <option value="@loc.LocId">@loc.Location</option>
+                        }
+                    </select>
+                    <span asp-validation-for="SelectedLocation" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="SelectedPriority" for="floatingSelect" class="">Priority</label>
+                    <select asp-for="SelectedPriority" class="form-select" aria-label="Floating label select example">
+                        <option value="">Select Priority</option>
+                        @foreach (var item in @ViewBag.Priorities)
+                        {
+                            <option value="@item.Id">@item.TktPriority</option>
+                        }
+                    </select>
+                    <span asp-validation-for="SelectedPriority" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="TicketTitle" class="control-label"></label>
+                <input asp-for="TicketTitle" class="form-control" />
+                <span asp-validation-for="TicketTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="TicketDesc" class="control-label"></label>
+                <textarea asp-for="TicketDesc" class="form-control" style="height: 200px"></textarea>
+                <span asp-validation-for="TicketDesc" class="text-danger"></span>
+            </div>
+            <div class="my-3">
+                <label class="form-label">Attachement</label>
+                <input asp-for="AttachFile" class="form-control" />
+            </div>
+
+            @*Hidden fields*@
+            <input type="hidden" asp-for="SelectedCategory" value="@Model.Category.CategoryId" />             
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Create" class="btn btn-secondary mx-3">Back</a>
+                <a asp-action="Index" class="btn btn-danger">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+<partial name="_ValidationScriptsPartial" />
