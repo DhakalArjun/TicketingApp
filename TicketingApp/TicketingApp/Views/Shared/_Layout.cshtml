@@ -29,15 +29,7 @@
                                 </a>
                             }
                         </li>
-                        <li class="nav-item">
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <a class="nav-link" asp-area="" asp-controller="Ticket" asp-action="Index">
-                                    Open Ticket
-                                    <span class="visually-hidden">(current)</span>
-                                </a>
-                            }
-                        </li>
+
                         <li class="nav-item">
                             @if (User.IsInRole("Admin"))                            
                             {
@@ -57,14 +49,28 @@
                             }
                         </li>
 
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Requests</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Ticket" asp-action="Create">Submit New Request</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Ticket" asp-action="OnGoingRequests">Ongoing Requests</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Ticket" asp-action="ClosedRequests">Closed Requests</a>
+                                </div>
+                            </li>                            
+                        }
 
                         @*
+                        
                         <li class="nav-item">
                         <a class="nav-link" href="#">Pricing</a>
                         </li>
                         <li class="nav-item">
                         <a class="nav-link" href="#">About</a>
                         </li>  
+                        
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin</a>
@@ -76,6 +82,7 @@
                             </div>
                         </li>
                         *@
+                        
 
                     </ul>
                     <form class="d-flex">

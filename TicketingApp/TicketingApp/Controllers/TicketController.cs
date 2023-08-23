@@ -29,12 +29,41 @@ namespace TicketingApp.Controllers
             _fileService = fileService;
         }
 
+        /*
+
         // GET: Ticket
         public async Task<IActionResult> Index()
         {
             return _context.Ticket != null ?
                         View(await _context.Ticket.ToListAsync()) :
                         Problem("Entity set 'ApplicationDbContext.Ticket'  is null.");
+        }
+        */
+
+        public async Task<IActionResult> OnGoingRequests()
+        {
+            var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User); 
+            var requests = await _context.Ticket
+                .Where(req => req.CreatedById == currentUser.Id && req.StatusId != 5)
+                .Include(req=>req.Category)
+                .Include(req=> req.Status)
+                .ToListAsync();
+
+            ViewBag.Requests = requests;
+            return View();            
+        }
+
+        public async Task<IActionResult> ClosedRequests()
+        {
+            var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            var requests = await _context.Ticket
+                .Where(req => req.CreatedById == currentUser.Id && req.StatusId == 5)
+                .Include(req => req.Category)
+                .Include(req => req.Status)
+                .ToListAsync();
+
+            ViewBag.Requests = requests;
+            return View();
         }
 
         // GET: Ticket/Details/5
@@ -51,7 +80,6 @@ namespace TicketingApp.Controllers
             {
                 return NotFound();
             }
-
             return View(ticket);
         }
 
@@ -99,13 +127,11 @@ namespace TicketingApp.Controllers
         }
 
 
-        // POST: Ticket/Create       
-        //[Bind("TicketId,Title,Description,CreatedDateTime,CreatedById,StatusId,CategoryId,LocationId,PriorityId")]
+        // POST: Ticket/CreateTicket      
         [HttpPost]
         [ValidateAntiForgeryToken]        
         public async Task<IActionResult> CreateTicket(MyViewModel vm)
-        {
-            
+        {            
             Ticket ticket = new Ticket();
             if (vm.AttachFile != null)
             {
@@ -219,7 +245,6 @@ namespace TicketingApp.Controllers
             {
                 return NotFound();
             }
-
             return View(ticket);
         }
 

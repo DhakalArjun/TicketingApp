@@ -1,0 +1,42 @@
+﻿@*@model IEnumerable<TicketingApp.Models.Ticket>*@
+@{
+    ViewData["Title"] = "OnGoingRequests";
+}
+<h2 class="my-4">My OnGoing Requests</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>          
+            <th>Created Date</th>            
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Assigned To</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in @ViewBag.Requests)
+        {
+            string assignTo = "NA";
+            if(item.AssignedTo != null)            
+            {
+                assignTo = string.Concat(item.AssignedTo.FirstName, " ", item.AssignedTo.LastName);
+            }
+            string reqStatus = "NA";
+            if (item.Status!= null)
+            {
+                reqStatus = item.Status.Status;
+            }
+                <tr>
+                <td>@item.CreatedDateTime.ToString("yyyy-MM-dd")</td>
+                <td>@item.Title</td>
+                <td>@string.Concat(@item.Description.Substring(0, 80), ".... ") </td>
+                <td>@reqStatus</td>
+                <td>@assignTo</td>               
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.TicketId" class="btn btn-outline-primary btn-sm" style="height=30px"> <i class="bi bi-eye-fill"></i> Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

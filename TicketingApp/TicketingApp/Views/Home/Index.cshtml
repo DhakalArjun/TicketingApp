@@ -2,7 +2,25 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="d-flex justify-content-between mt-5">
+    <div class="card col-5">
+        <div class="card-header">
+            New Request
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Need help?</h5>
+            <p class="card-text">Pick from the servies catalog and submit your request to our support team.</p>
+            <a class="btn btn-primary" asp-area="" asp-controller="Ticket" asp-action="Create"><i class="bi bi-calendar2-plus-fill fs-4"></i> Submit New Request</a>           
+        </div>
+    </div>
+    <div class="card col-5">
+        <div class="card-header">
+            View Requests
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Follow up with you ongoing requests</h5>
+            <p class="card-text">Check the progress, add comments, acknowledge the solution</p>
+            <a class="btn btn-primary" asp-area="" asp-controller="Ticket" asp-action="Index"><i class="bi bi-wechat fs-4"></i> View Ongoing Request</a>
+        </div>
+    </div>
 </div>
