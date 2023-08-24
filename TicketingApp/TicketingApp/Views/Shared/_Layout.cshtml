@@ -85,6 +85,24 @@
                         
 
                     </ul>
+                    <h6 class ="nav-item text-md-center mx-5 mt-2 mb-0">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <p>[Admin]</p>
+                        }
+                        else if (User.IsInRole("Manager"))
+                        {
+                            <p>[Manager]</p>
+                        }
+                        else if (User.IsInRole("Agent"))
+                        {
+                            <p>[Agent]</p>
+                        }
+                        else if (User.IsInRole("User"))
+                        {
+                            <p>[User]</p>
+                        }   
+                    </h6>
                     <form class="d-flex">
                         <input class="form-control me-sm-2" type="search" placeholder="Search">
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
@@ -123,9 +141,9 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - TicketingApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="footer bg-dark">
+        <div class="container text-center">
+            Copyright &copy; 2023 - TicketingApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

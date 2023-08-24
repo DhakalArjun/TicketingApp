@@ -2,8 +2,8 @@
 @{
     ViewData["Title"] = "OnGoingRequests";
 }
-<h2 class="my-4">My OnGoing Requests</h2>
-<table class="table table-striped">
+
+<table class="table table-striped mt-4">
     <thead>
         <tr>          
             <th>Created Date</th>            
@@ -18,6 +18,7 @@
         @foreach (var item in @ViewBag.Requests)
         {
             string assignTo = "NA";
+            
             if(item.AssignedTo != null)            
             {
                 assignTo = string.Concat(item.AssignedTo.FirstName, " ", item.AssignedTo.LastName);
@@ -30,11 +31,11 @@
                 <tr>
                 <td>@item.CreatedDateTime.ToString("yyyy-MM-dd")</td>
                 <td>@item.Title</td>
-                <td>@string.Concat(@item.Description.Substring(0, 80), ".... ") </td>
+                <td>@string.Concat(@item.Description.Substring(0, 20), ".... ") </td>
                 <td>@reqStatus</td>
                 <td>@assignTo</td>               
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.TicketId" class="btn btn-outline-primary btn-sm" style="height=30px"> <i class="bi bi-eye-fill"></i> Details</a>
+                    <a asp-action="EditTicket" asp-route-id="@item.TicketId" class="btn btn-outline-primary btn-sm" style="height:30px"> <i class="bi bi-eye-fill"></i> Details</a>
                 </td>
             </tr>
         }

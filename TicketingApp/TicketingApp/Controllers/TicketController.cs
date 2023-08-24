@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -29,17 +30,7 @@ namespace TicketingApp.Controllers
             _fileService = fileService;
         }
 
-        /*
-
-        // GET: Ticket
-        public async Task<IActionResult> Index()
-        {
-            return _context.Ticket != null ?
-                        View(await _context.Ticket.ToListAsync()) :
-                        Problem("Entity set 'ApplicationDbContext.Ticket'  is null.");
-        }
-        */
-
+        //user ongoing request -- for all roles
         public async Task<IActionResult> OnGoingRequests()
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User); 
@@ -53,6 +44,20 @@ namespace TicketingApp.Controllers
             return View();            
         }
 
+        //admin request to be assigned
+
+        [Authorize(Roles ="Admin, Manager")]
+        public async Task<IActionResult> OnBeAssigned()
+        {           
+            var requests = await _context.Ticket
+                .Where(req => req.StatusId ==1)
+                .Include(req => req.Category)
+                .Include(req => req.Status)
+                .ToListAsync();
+
+            ViewBag.Requests = requests;
+            return View("OnGoingRequests");
+        }
         public async Task<IActionResult> ClosedRequests()
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
@@ -167,7 +172,7 @@ namespace TicketingApp.Controllers
                 ticket.PriorityId = vm.SelectedPriority;
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(OnGoingRequests));
             }
             var locations = await _context.TicketLocations.ToListAsync();
             var priorities = await _context.TicketPriorities.ToListAsync();
@@ -271,5 +276,232 @@ namespace TicketingApp.Controllers
         {
           return (_context.Ticket?.Any(e => e.TicketId == id)).GetValueOrDefault();
         }
+
+        //Detail View, Assignment, Resolution, Closure
+
+
+        // GET: Ticket/Details/5
+        public async Task<IActionResult> TicketDetails(int? id)
+        {
+            if (id == null || _context.Ticket == null)
+            {
+                return NotFound();
+            }
+
+            var ticket = await _context.Ticket
+                .FirstOrDefaultAsync(m => m.TicketId == id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            var category = await _context.TicketCategories.FindAsync(ticket.CategoryId);
+            ticket.Category = category;
+            var priority = await _context.TicketPriorities.FindAsync(ticket.PriorityId);
+            ticket.Priority = priority;
+            var location = await _context.TicketLocations.FindAsync(ticket.LocationId);
+            ticket.Location = location;
+            var status = await _context.TicketStatuses.FindAsync(ticket.StatusId);
+            ticket.Status = status;
+            if (ticket.CreatedById != null)
+            {
+                var createdBy = await _userManager.FindByIdAsync(ticket.CreatedById);
+                ticket.AssignedTo = createdBy;
+            }
+            if (ticket.AssignedToId != null)
+            {
+                var assignTo = await _userManager.FindByIdAsync(ticket.AssignedToId);
+                ticket.AssignedTo = assignTo;
+            }
+            if (ticket.AssignedById != null)
+            {
+                var assignBy = await _userManager.FindByIdAsync(ticket.AssignedById);
+                ticket.AssignedBy = assignBy;
+            }
+            if (ticket.ClosedById != null)
+            {
+                var closedBy = await _userManager.FindByIdAsync(ticket.ClosedById);
+                ticket.ClosedBy = closedBy;
+            }
+            return View(ticket);
+        }
+
+        // GET: Ticket/Details/5
+        public async Task<IActionResult> EditTicket(int? id)
+        {
+            if (id == null || _context.Ticket == null)
+            {
+                return NotFound();
+            }
+
+            var ticket = await _context.Ticket
+                .FirstOrDefaultAsync(m => m.TicketId == id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            var agentOrManager = await (from u in _context.Users
+                                      join ur in _context.UserRoles
+                                      on u.Id equals ur.UserId
+                                      join r in _context.Roles
+                                      on ur.RoleId equals r.Id
+                                      select new
+                                      {
+                                          u.Id,
+                                          u.UserName,
+                                          u.FirstName,
+                                          u.LastName,
+                                          r.Name,                                         
+                                      })
+                                      .Where(r=>r.Name=="Agent" || r.Name=="Admin" || r.Name=="Manager")                                      
+                                      .ToListAsync();
+            ViewBag.AgentOrManager = agentOrManager;
+            var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            ViewBag.CurUserId = currentUser.Id;
+
+            var category = await _context.TicketCategories.FindAsync(ticket.CategoryId);
+            ticket.Category = category;
+            var priority = await _context.TicketPriorities.FindAsync(ticket.PriorityId);
+            ticket.Priority = priority;
+            var location = await _context.TicketLocations.FindAsync(ticket.LocationId);
+            ticket.Location = location;
+            var status = await _context.TicketStatuses.FindAsync(ticket.StatusId);
+            ticket.Status = status;
+            if (ticket.CreatedById != null)
+            {
+                var createdBy = await _userManager.FindByIdAsync(ticket.CreatedById);
+                ticket.AssignedTo = createdBy;
+            }
+            if (ticket.AssignedToId != null)
+            {
+                var assignTo = await _userManager.FindByIdAsync(ticket.AssignedToId);
+                ticket.AssignedTo = assignTo;
+            }
+            if (ticket.AssignedById != null)
+            {
+                var assignBy = await _userManager.FindByIdAsync(ticket.AssignedById);
+                ticket.AssignedBy = assignBy;
+            }
+            if (ticket.ClosedById != null)
+            {
+                var closedBy = await _userManager.FindByIdAsync(ticket.ClosedById);
+                ticket.ClosedBy = closedBy;
+            }
+            return View(ticket);
+        }
+
+        // GET: Ticket/Edit/5
+        [HttpPost]
+        public async Task<IActionResult> EditTicket(Ticket ticket, string submitButton)
+        {      
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                switch(submitButton)
+                {
+                    case "Modify":
+                        ViewBag.Conditon = 1;
+                        break;
+                    case "Assign":
+                        ViewBag.Condition = 2;                       
+                        break;
+                    case "Reassign":
+                        ViewBag.Condition = 3;
+                                     
+                        break;
+                    case "Resolve":
+                        ViewBag.Condition = 4;
+                        break;
+                    case "Can't Resolve":
+                        ViewBag.Condition = 5;
+                        break;
+                    case "Close":
+                        ViewBag.Condition = 6;
+                        break;
+                    default:
+                        ViewBag.Condition = 0;
+                        break;
+                }
+
+            }
+            var agentOrManager = await (from u in _context.Users
+                                        join ur in _context.UserRoles
+                                        on u.Id equals ur.UserId
+                                        join r in _context.Roles
+                                        on ur.RoleId equals r.Id
+                                        select new
+                                        {
+                                            u.Id,
+                                            u.UserName,
+                                            u.FirstName,
+                                            u.LastName,
+                                            r.Name,
+                                        })
+                                      .Where(r => r.Name == "Agent" || r.Name == "Admin" || r.Name == "Manager")
+                                      .ToListAsync();
+            ViewBag.AgentOrManager = agentOrManager;
+            var category = await _context.TicketCategories.FindAsync(ticket.CategoryId);
+            ticket.Category = category;
+            var priority = await _context.TicketPriorities.FindAsync(ticket.PriorityId);
+            ticket.Priority = priority;
+            var location = await _context.TicketLocations.FindAsync(ticket.LocationId);
+            ticket.Location = location;
+            var status = await _context.TicketStatuses.FindAsync(ticket.StatusId);
+            ticket.Status = status;
+            if (ticket.CreatedById != null)
+            {
+                var createdBy = await _userManager.FindByIdAsync(ticket.CreatedById);
+                ticket.CreatedBy = createdBy;
+            }
+            if (ticket.AssignedToId != null)
+            {
+                var assignTo = await _userManager.FindByIdAsync(ticket.AssignedToId);
+                ticket.AssignedTo = assignTo;
+            }
+            if (ticket.AssignedById != null)
+            {
+                var assignBy = await _userManager.FindByIdAsync(ticket.AssignedById);
+                ticket.AssignedBy = assignBy;
+            }
+            if (ticket.ClosedById != null)
+            {
+                var closedBy = await _userManager.FindByIdAsync(ticket.ClosedById);
+                ticket.ClosedBy = closedBy;
+            }
+
+            return View(ticket);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
