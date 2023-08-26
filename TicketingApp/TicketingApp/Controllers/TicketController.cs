@@ -58,6 +58,21 @@ namespace TicketingApp.Controllers
             ViewBag.Requests = requests;
             return View("OnGoingRequests");
         }
+
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> OnGoingReqestsAdmin()
+        {
+            var requests = await _context.Ticket
+                .Where(req => req.StatusId > 1 && req.StatusId !=5)
+                .Include(req => req.Category)
+                .Include(req => req.Status)
+                .ToListAsync();
+
+            ViewBag.Requests = requests;
+            return View();
+        }
+
+
         public async Task<IActionResult> ClosedRequests()
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
@@ -399,13 +414,24 @@ namespace TicketingApp.Controllers
             }
             else
             {
-                switch(submitButton)
+                var existingTicket = _context.Ticket.Find(ticket.TicketId);
+                var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                switch (submitButton)
                 {
                     case "Modify":
                         ViewBag.Conditon = 1;
                         break;
                     case "Assign":
-                        ViewBag.Condition = 2;                       
+                        if(ticket.AssignedToId != null)
+                        {
+                            existingTicket.AssignedToId = ticket.AssignedToId;
+                            existingTicket.StatusId = 2;
+                            existingTicket.AssignedById = currentUser.Id;
+                            existingTicket.AssignedDateTime = DateTime.Now;                           
+                            _context.SaveChanges();
+
+                        }
+                                                                    
                         break;
                     case "Reassign":
                         ViewBag.Condition = 3;
@@ -470,7 +496,6 @@ namespace TicketingApp.Controllers
                 var closedBy = await _userManager.FindByIdAsync(ticket.ClosedById);
                 ticket.ClosedBy = closedBy;
             }
-
             return View(ticket);
         }
 

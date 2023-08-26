@@ -57,12 +57,12 @@
             </div>
             <div class="form-group mb-4">
                 <label class="control-label">Title</label>
-                <input asp-for="@Model.Title" class="form-control text-dark" disabled  value="@Model.Title"/>
+                <input asp-for="@Model.Title" class="form-control text-dark"  value="@Model.Title" readonly/>
             </div>
 
             <div class="form-group mb-2">
                 <label asp-for="@Model.Description" class="control-label"></label>
-                <textarea asp-for="@Model.Description" class="form-control text-dark" style="height:100px" disabled value="@Model.Description"></textarea>
+                <textarea asp-for="@Model.Description" class="form-control text-dark" style="height:100px" value="@Model.Description" readonly></textarea>
                 <span asp-validation-for="@Model.Description" class="text-danger"></span>
             </div>
             <div class="my-3">
@@ -71,16 +71,15 @@
             </div>
 
             @*Hidden fields*@
-            <input type="hidden" asp-for="Description" value="@Model.Description/>
-            <input type="hidden" asp-for="Title" value="@Model.Title" />
+            <input type="hidden" asp-for="TicketId" value="@Model.TicketId"/>     
             <input type="hidden" asp-for="CategoryId" value="@Model.CategoryId" />
             <input type="hidden" asp-for="LocationId" value="@Model.LocationId" />
             <input type="hidden" asp-for="PriorityId" value="@Model.PriorityId" />
-            <input type="hidden" asp-for="CreatedById" value="@Model.CreatedById" />
-            <input type="hidden" asp-for="StatusId" value="@Model.StatusId" />
-           
+            <input type="hidden" asp-for="CreatedById" value="@Model.CreatedById"/>
             <input type="hidden" asp-for="CreatedDateTime" value="@Model.CreatedDateTime" />
-            
+
+
+                      
             <input type="hidden" asp-for="ResolvedDateTime" value="@Model.ResolvedDateTime" />
             <input type="hidden" asp-for="ClosedDateTime" value="@Model.ClosedDateTime" />
 
@@ -111,10 +110,9 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Assigned By</label>
-                            <input class="form-control text-dark" value="@Model.Priority.TktPriority" disabled>
+                            <input class="form-control text-dark" value="@tktAssignBy" disabled>
                         </div>
                     </div>
-
                     
                 }else{
                     if (User.IsInRole("Admin"))
@@ -132,7 +130,7 @@
                             <span asp-validation-for="AssignedToId" class="text-danger"></span>
                             <input type="hidden" asp-for="AssignedDateTime" value="@DateTime.Now" />
                             <input type="hidden" asp-for="AssignedById" value="@ViewBag.CurUserId" />
-                            <input type="hidden" asp-for="StatusId" value="2" />
+                            
                         </div>
                         <input type="submit" value="Assign" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
                     }
