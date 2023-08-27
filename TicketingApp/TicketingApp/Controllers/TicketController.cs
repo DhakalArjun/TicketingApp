@@ -14,7 +14,8 @@ using TicketingApp.Models;
 using TicketingApp.Services;
 
 namespace TicketingApp.Controllers
-{
+{ 
+    [Authorize]
     public class TicketController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -45,7 +46,6 @@ namespace TicketingApp.Controllers
         }
 
         //admin request to be assigned
-
         [Authorize(Roles ="Admin, Manager")]
         public async Task<IActionResult> OnBeAssigned()
         {           
@@ -72,6 +72,7 @@ namespace TicketingApp.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin, Manager, Agent")]
         public async Task<IActionResult> TaskAssignedToMe()
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
@@ -85,20 +86,24 @@ namespace TicketingApp.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin, Manager, Agent")]
+        //List of my tasks that completed but not closed
         public async Task<IActionResult> TaskToCloseAssignedToMe()
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            var requests = await _context.Ticket
-                .Where(req => (req.StatusId == 3 || req.StatusId==4) && req.AssignedToId == currentUser.Id)
+            if (currentUser != null)
+            {
+                var requests = await _context.Ticket
+                .Where(req => (req.StatusId == 3 || req.StatusId == 4) && req.AssignedToId == currentUser.Id)
                 .Include(req => req.Category)
                 .Include(req => req.Status)
                 .ToListAsync();
-
-            ViewBag.Requests = requests;
+                ViewBag.Requests = requests;
+            }            
             return View();
         }
 
-
+        //List of closed request those are created by me       
         public async Task<IActionResult> ClosedRequests()
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
@@ -112,23 +117,7 @@ namespace TicketingApp.Controllers
             return View();
         }
 
-        // GET: Ticket/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Ticket == null)
-            {
-                return NotFound();
-            }
-
-            var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.TicketId == id);
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-            return View(ticket);
-        }
-
+        
         public class MyViewModel
         {
             public TicketCategory? Category { get; set; }
@@ -148,11 +137,11 @@ namespace TicketingApp.Controllers
             [Display(Name = "Description")]
             public string TicketDesc { get; set; }
         }
-        
-        
+
         // GET: Ticket/Create
-        public async Task<IActionResult> Create()        {
-            List<TicketCategory> Categories = await _context.TicketCategories.ToListAsync(); 
+        public async Task<IActionResult> Create()
+        {
+            List<TicketCategory> Categories = await _context.TicketCategories.ToListAsync();
             return View(Categories);
         }
 
@@ -226,145 +215,6 @@ namespace TicketingApp.Controllers
             
         }
 
-        // GET: Ticket/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Ticket == null)
-            {
-                return NotFound();
-            }
-
-            var ticket = await _context.Ticket.FindAsync(id);
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-            return View(ticket);
-        }
-
-        // POST: Ticket/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TicketId,Title,Created,Description,AssignedDateTime,ResolvedDateTime")] Ticket ticket)
-        {
-            if (id != ticket.TicketId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(ticket);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TicketExists(ticket.TicketId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(ticket);
-        }
-
-        // GET: Ticket/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Ticket == null)
-            {
-                return NotFound();
-            }
-
-            var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.TicketId == id);
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-            return View(ticket);
-        }
-
-        // POST: Ticket/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Ticket == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Ticket'  is null.");
-            }
-            var ticket = await _context.Ticket.FindAsync(id);
-            if (ticket != null)
-            {
-                _context.Ticket.Remove(ticket);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool TicketExists(int id)
-        {
-          return (_context.Ticket?.Any(e => e.TicketId == id)).GetValueOrDefault();
-        }
-
-        //Detail View, Assignment, Resolution, Closure
-
-
-        // GET: Ticket/Details/5
-        public async Task<IActionResult> TicketDetails(int? id)
-        {
-            if (id == null || _context.Ticket == null)
-            {
-                return NotFound();
-            }
-
-            var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.TicketId == id);
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-            var category = await _context.TicketCategories.FindAsync(ticket.CategoryId);
-            ticket.Category = category;
-            var priority = await _context.TicketPriorities.FindAsync(ticket.PriorityId);
-            ticket.Priority = priority;
-            var location = await _context.TicketLocations.FindAsync(ticket.LocationId);
-            ticket.Location = location;
-            var status = await _context.TicketStatuses.FindAsync(ticket.StatusId);
-            ticket.Status = status;
-            if (ticket.CreatedById != null)
-            {
-                var createdBy = await _userManager.FindByIdAsync(ticket.CreatedById);
-                ticket.AssignedTo = createdBy;
-            }
-            if (ticket.AssignedToId != null)
-            {
-                var assignTo = await _userManager.FindByIdAsync(ticket.AssignedToId);
-                ticket.AssignedTo = assignTo;
-            }
-            if (ticket.AssignedById != null)
-            {
-                var assignBy = await _userManager.FindByIdAsync(ticket.AssignedById);
-                ticket.AssignedBy = assignBy;
-            }
-            if (ticket.ClosedById != null)
-            {
-                var closedBy = await _userManager.FindByIdAsync(ticket.ClosedById);
-                ticket.ClosedBy = closedBy;
-            }
-            return View(ticket);
-        }
 
         // GET: Ticket/Details/5
         public async Task<IActionResult> EditTicket(int? id)
@@ -373,7 +223,6 @@ namespace TicketingApp.Controllers
             {
                 return NotFound();
             }
-
             var ticket = await _context.Ticket
                 .FirstOrDefaultAsync(m => m.TicketId == id);
             if (ticket == null)
@@ -397,16 +246,33 @@ namespace TicketingApp.Controllers
                                       .ToListAsync();
             ViewBag.AgentOrManager = agentOrManager;
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            ViewBag.CurUserId = currentUser.Id;
-
+            if(currentUser != null)
+            {
+                ViewBag.CurUserId = currentUser.Id;
+            } 
             var category = await _context.TicketCategories.FindAsync(ticket.CategoryId);
-            ticket.Category = category;
+            if(category != null)
+            {
+                ticket.Category = category;
+            }            
             var priority = await _context.TicketPriorities.FindAsync(ticket.PriorityId);
-            ticket.Priority = priority;
+            if(priority != null)
+            {
+                ticket.Priority = priority;
+            }
+            
             var location = await _context.TicketLocations.FindAsync(ticket.LocationId);
-            ticket.Location = location;
+            if(location != null)
+            {
+                ticket.Location = location;
+            }
+            
             var status = await _context.TicketStatuses.FindAsync(ticket.StatusId);
-            ticket.Status = status;
+            if(status != null)
+            {
+                ticket.Status = status;
+            }
+           
             if (ticket.CreatedById != null)
             {
                 var createdBy = await _userManager.FindByIdAsync(ticket.CreatedById);
