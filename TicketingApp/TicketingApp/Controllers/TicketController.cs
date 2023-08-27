@@ -22,13 +22,17 @@ namespace TicketingApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFileService _fileService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public TicketController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IFileService fileService)
+
+
+        public TicketController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IFileService fileService, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _fileService = fileService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         //user ongoing request -- for all user
@@ -413,5 +417,69 @@ namespace TicketingApp.Controllers
             }         
             return RedirectToAction("EditTicket", new {id = ticket.TicketId});
         }
+
+        public IActionResult OpenFile(string relativePath, string fileName)
+        {
+            try
+            {
+                string filePath = Path.Combine(_webHostEnvironment.ContentRootPath, relativePath, fileName);
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    string fileContent = System.IO.File.ReadAllText(filePath);
+                    return Content(fileContent);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        public IActionResult ViewFile(string relativePath, string fileName)
+        {
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, relativePath, fileName);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                /*
+                var fileContents = System.IO.File.ReadAllText(filePath);
+                ViewBag.FileName = fileName;
+                ViewBag.FileContents = fileContents;
+                return View();
+                */
+                
+                var mimeType = GetMimeType(fileName);
+                return PhysicalFile(filePath, mimeType);
+                
+
+                /*
+                
+                var fileContents = System.IO.File.ReadAllBytes(filePath);
+                var mimeType = GetMimeType(fileName);
+                return File(fileContents, mimeType);
+                */
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
+        private string GetMimeType(string fileName)
+        {
+            var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(fileName, out var mimeType))
+            {
+                mimeType = "application/octet-stream"; // Default MIME type
+            }
+            return mimeType;
+        }
+
     }
 }
