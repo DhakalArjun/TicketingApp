@@ -2,17 +2,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Comments</h1>
-
-
-
-
-
-
-
-
-
+<partial name="_SecondNavbarPartial" />
 @foreach (var com in @ViewBag.PrevComments)
 {
     string commentBy = string.Concat(@com.CommentBy.FirstName, " ", @com.CommentBy.LastName);

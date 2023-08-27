@@ -2,9 +2,7 @@
 @{
     ViewData["Title"] = "EditTicket";
 }
-
-<h1>TicketDetails</h1>
-<hr />
+<partial name="_SecondNavbarPartial" />
 <div class="row">
     <div class="col-12">
         <form asp-action="EditTicket" method="post" enctype="multipart/form-data">
@@ -243,5 +241,4 @@
         </form>
     </div>
 </div>
-<a asp-controller="Comment" asp-action="Index" asp-route-ticketId="@Model.TicketId" class="btn btn-success mr-2" style="width:7rem">View Comments</a>
 <partial name="_ValidationScriptsPartial" />

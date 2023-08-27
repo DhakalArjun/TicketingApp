@@ -362,7 +362,7 @@ namespace TicketingApp.Controllers
                 var closedBy = await _userManager.FindByIdAsync(ticket.ClosedById);
                 ticket.ClosedBy = closedBy;
             }
-            return View(ticket);
+            return View(ticket);           
         }
 
         // GET: Ticket/Edit/5
