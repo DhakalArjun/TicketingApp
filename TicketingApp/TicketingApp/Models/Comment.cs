@@ -8,6 +8,7 @@ namespace TicketingApp.Models
     {
         [Key]
         public int CommentId { get; set; }
+        [Required(ErrorMessage ="No thing to Post !")]
         public string CommentText { get; set; }            
         public DateTime CommentDateTime { get; set; }
 

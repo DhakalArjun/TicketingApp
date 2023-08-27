@@ -1,0 +1,40 @@
+﻿@model TicketingApp.Models.Comment
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Comments</h1>
+
+
+
+
+
+
+
+
+
+@foreach (var com in @ViewBag.PrevComments)
+{
+    string commentBy = string.Concat(@com.CommentBy.FirstName, " ", @com.CommentBy.LastName);
+    <div class="my-2 border border-1 rounded-1 border-info p-2">
+        <div class="d-flex">
+            <p>Comment By:</p>                
+            <p class="mx-2 fw-bold">@commentBy,</p>
+            <p>@com.CommentDateTime</p>
+        </div>
+        <p class="card-text">@com.CommentText</p>
+    </div>
+}
+<form asp-action="AddComment" asp-route-id="@Model.TicketId" method="post">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="CommentText">Add New Comment:</label>
+        <textarea class="form-control" id="CommentText" name="CommentText" asp-for="CommentText" required></textarea>
+        <span asp-validation-for="CommentText" class="text-danger"></span>
+    </div>
+    <div class="text-end">
+        <a href='javascript:history.go(-1)' class="btn btn-secondary mr-2 mt-2" style="width:8.5rem">Back</a>        
+        <button type="submit" asp-controller="Comment" asp-action="Index" asp-route-ticketId="@Model.TicketId" class="btn btn-success mr-2 mt-2" style="width:8.5rem">Add Comment</button>
+    </div>       
+</form>
+
