@@ -23,16 +23,20 @@ namespace TicketingApp.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFileService _fileService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly RoleManager<ApplicationUser> _roleManager;
+        private readonly EmailSender _emailSender;
 
 
 
-        public TicketController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IFileService fileService, IWebHostEnvironment webHostEnvironment)
+        public TicketController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IFileService fileService, IWebHostEnvironment webHostEnvironment, EmailSender emailSender, RoleManager<ApplicationUser> roleManager)
         {
             _context = context;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _fileService = fileService;
-            _webHostEnvironment = webHostEnvironment;
+            _webHostEnvironment = webHostEnvironment;           
+            _roleManager = roleManager;
+            _emailSender = emailSender;
         }
 
         //user ongoing request -- for all user
@@ -205,11 +209,11 @@ namespace TicketingApp.Controllers
         {
             var category = await _context.TicketCategories.FindAsync(category_id);
             var locations = await _context.TicketLocations.ToListAsync();
-            var priorities = await _context.TicketPriorities.ToListAsync();
+            var priorities = await _context.TicketPriorities.ToListAsync();           
             
             ViewBag.Locations = locations;
-            ViewBag.Priorities = priorities;           
-
+            ViewBag.Priorities = priorities;
+            
             var viewModel = new MyViewModel();
             if(category !=null) viewModel.Category = category;
                               
@@ -233,7 +237,7 @@ namespace TicketingApp.Controllers
                     await _context.SaveChangesAsync();                   
                     var deleteResult = _fileService.DeleteImage(oldImage);
                 }
-            }
+            }     
 
             if (vm.SelectedPriority == 0)
             {
@@ -247,6 +251,7 @@ namespace TicketingApp.Controllers
             if (ModelState.IsValid)
             {
                 var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var managerRole = await _roleManager.FindByNameAsync("Manager");
                 ticket.Title = vm.TicketTitle;
                 ticket.Description = vm.TicketDesc;
                 ticket.CreatedById = currentUser.Id;
@@ -257,6 +262,15 @@ namespace TicketingApp.Controllers
                 ticket.PriorityId = vm.SelectedPriority;
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
+                if(managerRole != null && currentUser !=null)
+                {            
+                    string subject = "New Requested Created";
+                    string messageToManager = "Hello, \nNew new requested has been created for \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\n Created By: " + currentUser.FirstName + " " + currentUser.LastName + "(" + currentUser.Email + ")" + "\nPriority: " + ticket.Priority.TktPriority;
+                    string messageToUser = "Hello, \n Your requested has been created successfully \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\nTo view the progress on your request, you can go click View Ongoing Requests";
+
+                    await _emailSender.SendEmailAsync(managerRole.Email, subject, messageToManager);
+                    await _emailSender.SendEmailAsync(currentUser.Email, subject, messageToUser);
+                }
                 return RedirectToAction(nameof(OnGoingRequests));
             }
             var locations = await _context.TicketLocations.ToListAsync();
@@ -363,6 +377,7 @@ namespace TicketingApp.Controllers
             {
                 var existingTicket = _context.Ticket.Find(ticket.TicketId);
                 var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var managerRole = await _roleManager.FindByNameAsync("Manager");
                 switch (submitButton)
                 {                 
                     case "Assign": //task assignment
@@ -371,8 +386,12 @@ namespace TicketingApp.Controllers
                             existingTicket.AssignedToId = ticket.AssignedToId;
                             existingTicket.StatusId = 2;
                             existingTicket.AssignedById = currentUser.Id;
-                            existingTicket.AssignedDateTime = DateTime.Now;                           
+                            existingTicket.AssignedDateTime = DateTime.Now;                            
                             _context.SaveChanges();
+                            var assignedToRole = await _roleManager.FindByIdAsync(ticket.AssignedToId);
+                            string subject = "New Task Assigned";                               
+                                string message = "Hello, \n A task has been assigned to you, details of the task: \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory +  "\nPriority: " + ticket.Priority.TktPriority + "\nTo view the details of task, you can click 'View Task Just Assigned'";
+                                await _emailSender.SendEmailAsync(assignedToRole.Email, subject, message);
                         }                                                                    
                         break;                    
                     case "Save": //Resolution
@@ -392,6 +411,10 @@ namespace TicketingApp.Controllers
                         existingTicket.ResolutionComment = null;
                         existingTicket.ResolvedDateTime = null;
                         _context.SaveChanges();
+                        var assignedToRole2 = await _roleManager.FindByIdAsync(ticket.AssignedToId);
+                        string subject2 = "New Task Assigned";
+                        string message2 = "Hello, \n A task has been assigned to you, details of the task:  \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\nPriority: " + ticket.Priority.TktPriority + "\nTo view the details of task, you can click 'View Task Just Assigned'";
+                        await _emailSender.SendEmailAsync(assignedToRole2.Email, subject2, message2);
                         break;
                     case "Close as Not Resolvable":    //request close although unresolved                  
                         existingTicket.ClosedById = currentUser.Id;
@@ -399,6 +422,13 @@ namespace TicketingApp.Controllers
                         existingTicket.ClosedDateTime = DateTime.Now;
                         existingTicket.ClosingComment = ticket.ClosingComment;
                         _context.SaveChanges();
+                        var assignedToRole3 = await _roleManager.FindByIdAsync(ticket.AssignedToId);
+                        string subject3 = "Your Request is closed - issue not resolvable";
+                        string message3 = "Hello, \n Your requested has been closed but unfortunately the issue cannot be closed. Request details was: \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\nPriority: " + ticket.Priority.TktPriority + "\nTo view the details of task, you can click 'View Task Just Assigned'";
+                        await _emailSender.SendEmailAsync(assignedToRole3.Email, subject3, message3);
+                        break;
+
+
                         break;
                     case "Close":   //request closed after resolution
                         if (ticket.StatusId != 3 && ticket.ClosingComment.Length > 0)
@@ -408,6 +438,10 @@ namespace TicketingApp.Controllers
                             existingTicket.ClosedDateTime = DateTime.Now;
                             existingTicket.ClosingComment = ticket.ClosingComment;
                             _context.SaveChanges();
+                            var assignedToRole4 = await _roleManager.FindByIdAsync(ticket.AssignedToId);
+                            string subject4 = "Your Request is closed - issue resolved";
+                            string message4 = "Hello, \n Your requested has been fullfilled and closed. Request details was: \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\nPriority: " + ticket.Priority.TktPriority + "\nTo view the details of task, you can click 'View Task Just Assigned'";
+                            await _emailSender.SendEmailAsync(assignedToRole4.Email, subject4, message4);
                         }                        
                         break;
                     default:
@@ -418,7 +452,8 @@ namespace TicketingApp.Controllers
             return RedirectToAction("EditTicket", new {id = ticket.TicketId});
         }
 
-        public IActionResult OpenFile(string relativePath, string fileName)
+       
+        public IActionResult OpenFile(string relativePath, string fileName)  //This action current not in use
         {
             try
             {
@@ -439,7 +474,7 @@ namespace TicketingApp.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
-
+        
         public IActionResult ViewFile(string relativePath, string fileName)
         {
             var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, relativePath, fileName);
@@ -455,7 +490,6 @@ namespace TicketingApp.Controllers
             }
         }
 
-
         private string GetMimeType(string fileName)
         {
             var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
@@ -467,4 +501,3 @@ namespace TicketingApp.Controllers
         }
     }
 }
-

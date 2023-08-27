@@ -55,5 +55,4 @@ public class EmailSender : IEmailSender
                                : $"Failure Email to {toEmail}");
     }
 
-
 }
