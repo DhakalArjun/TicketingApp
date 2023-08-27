@@ -76,14 +76,14 @@
                     {
                         string relativePath = "wwwroot\\Uploads";
                         string fileName = Model.TicketAttachement;
-                        <a class="btn btn-primary" asp-area="" asp-controller="Ticket" asp-action="ViewFile" asp-route-relativePath="@relativePath", asp-route-fileName="@fileName" >View</a>
+                        <label class="form-label">Attachement</label>
+                        <div class="col-md-4 mb-2 d-flex">
+                            
+                            <input asp-for="TicketAttachement" class="form-control px-1" value="@Model.TicketAttachement" readonly />
+                            <a class="btn btn-primary mx-2" asp-area="" asp-controller="Ticket" asp-action="ViewFile" asp-route-relativePath="@relativePath" , asp-route-fileName="@fileName" style="width:7rem">View</a>
+                        </div>                       
                     }
-                }
-                <div class="my-3">
-                    <label class="form-label">Attachement</label>
-                    <input asp-for="TicketAttachement" class="form-control" value="@Model.TicketAttachement" readonly/>
-
-                </div>
+                }               
 
                 @*Hidden fields*@
                 <input type="hidden" asp-for="TicketId" value="@Model.TicketId"/>  
@@ -131,8 +131,7 @@
                             <input type="hidden" asp-for="AssignedById" value="@ViewBag.CurUserId" />
                             <input type="submit" value="Assign" class="btn btn-primary mr-2 mt-2" style="width:7rem" name="submitButton" />
                         </div>
-                    </div>
-                    
+                    </div>                    
                 } 
                 
                 @if (Model.StatusId >=3)//If Agent already provided his resolution or completed his task
@@ -238,8 +237,8 @@
                 }
             </div>
             <div class="text-end">
-            <a asp-action="" class="btn btn-secondary mr-2" style="width:7rem">Back</a>
-            <a asp-action="Index" class="btn btn-success mr-2" style="width:7rem">Home</a>
+            <a href='javascript:history.go(-1)' class="btn btn-secondary mr-2" style="width:7rem">Back</a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-success mr-2" style="width:7rem">Home</a>
             </div>
         </form>
     </div>

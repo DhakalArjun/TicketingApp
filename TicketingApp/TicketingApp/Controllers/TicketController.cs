@@ -331,7 +331,7 @@ namespace TicketingApp.Controllers
             if (ticket.CreatedById != null)
             {
                 var createdBy = await _userManager.FindByIdAsync(ticket.CreatedById);
-                ticket.AssignedTo = createdBy;
+                ticket.CreatedBy= createdBy;
             }
             if (ticket.AssignedToId != null)
             {
@@ -445,24 +445,9 @@ namespace TicketingApp.Controllers
             var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, relativePath, fileName);
 
             if (System.IO.File.Exists(filePath))
-            {
-                /*
-                var fileContents = System.IO.File.ReadAllText(filePath);
-                ViewBag.FileName = fileName;
-                ViewBag.FileContents = fileContents;
-                return View();
-                */
-                
+            {              
                 var mimeType = GetMimeType(fileName);
-                return PhysicalFile(filePath, mimeType);
-                
-
-                /*
-                
-                var fileContents = System.IO.File.ReadAllBytes(filePath);
-                var mimeType = GetMimeType(fileName);
-                return File(fileContents, mimeType);
-                */
+                return PhysicalFile(filePath, mimeType); 
             }
             else
             {
@@ -480,6 +465,6 @@ namespace TicketingApp.Controllers
             }
             return mimeType;
         }
-
     }
 }
+
