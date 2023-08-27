@@ -31,7 +31,7 @@ namespace TicketingApp.Controllers
             _fileService = fileService;
         }
 
-        //user ongoing request -- for all roles
+        //user ongoing request -- for all user
         public async Task<IActionResult> OnGoingRequests()
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User); 
@@ -42,6 +42,7 @@ namespace TicketingApp.Controllers
                 .ToListAsync();
 
             ViewBag.Requests = requests;
+            ViewBag.PageHeading = "My Ongoing Requests";          
             return View();            
         }
 
@@ -56,7 +57,8 @@ namespace TicketingApp.Controllers
                 .ToListAsync();
 
             ViewBag.Requests = requests;
-            return View("OnGoingRequests");
+            ViewBag.PageHeading = "List of Request Need To Be Assigned";
+            return View();
         }
 
         [Authorize(Roles = "Admin, Manager")]
@@ -69,7 +71,53 @@ namespace TicketingApp.Controllers
                 .ToListAsync();
 
             ViewBag.Requests = requests;
+            ViewBag.PageHeading = "List of Ongoing Tasks";
             return View();
+        }
+
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> RequestNeedToBeClosed()
+        {
+            var requests = await _context.Ticket
+                .Where(req => req.StatusId ==3 || req.StatusId ==4)
+                .Include(req => req.Category)
+                .Include(req => req.Status)
+                .ToListAsync();
+
+            ViewBag.Requests = requests;
+            ViewBag.PageHeading = "List of Task Need To Be Closed";
+            return View();
+        }
+
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> AllClosedRequests()
+        {
+            var requests = await _context.Ticket
+                .Where(req => req.StatusId >= 5)
+                .OrderByDescending(req => req.CreatedDateTime)
+                .Include(req => req.Category)
+                .Include(req => req.Status)
+                .ToListAsync();
+
+            ViewBag.Requests = requests;
+            ViewBag.PageHeading = "Closed Requests";
+            return View();
+        }
+
+        [Authorize(Roles = "Admin, Manager, Agent")]
+        public async Task<IActionResult> ClosedRequestsAssignToMe()
+        {
+            var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            var requests = await _context.Ticket
+                .Where(req => req.StatusId >= 5 && req.AssignedToId==currentUser.Id)
+                .OrderByDescending(req => req.CreatedDateTime)
+                .Include(req => req.Category)
+                .Include(req => req.Status)
+                .ToListAsync();
+
+            ViewBag.Requests = requests;
+            ViewBag.PageHeading = "Closed Requests";
+            return View("ClosedRequests");
         }
 
         [Authorize(Roles = "Admin, Manager, Agent")]
@@ -83,6 +131,7 @@ namespace TicketingApp.Controllers
                 .ToListAsync();
 
             ViewBag.Requests = requests;
+            ViewBag.PageHeading = "List of Tasks Assigned To Me";
             return View();
         }
 
@@ -99,6 +148,7 @@ namespace TicketingApp.Controllers
                 .Include(req => req.Status)
                 .ToListAsync();
                 ViewBag.Requests = requests;
+                ViewBag.PageHeading = "List of Request Completed But Not Closed";
             }            
             return View();
         }
@@ -114,6 +164,7 @@ namespace TicketingApp.Controllers
                 .ToListAsync();
 
             ViewBag.Requests = requests;
+            ViewBag.PageHeading = "My Closed Request";
             return View();
         }
 

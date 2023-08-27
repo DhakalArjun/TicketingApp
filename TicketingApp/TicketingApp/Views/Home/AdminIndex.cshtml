@@ -32,7 +32,7 @@
         <div class="card-body">
             <h5 class="card-title">Need help?</h5>
             <p class="card-text">Pick from the servies catalog and submit your request to our support team.</p>
-            <a class="btn btn-danger" asp-area="" asp-controller="Ticket" asp-action="Create"><i class="bi bi-calendar2-plus-fill fs-4"></i> Request To be Closed</a>
+            <a class="btn btn-danger" asp-area="" asp-controller="Ticket" asp-action="RequestNeedToBeClosed"><i class="bi bi-calendar2-plus-fill fs-4"></i> Request To be Closed</a>
         </div>
     </div>
     <div class="card col-5">
@@ -42,7 +42,7 @@
         <div class="card-body">
             <h5 class="card-title">Follow up with you closed requests</h5>
             <p class="card-text">Check the progress, add comments, acknowledge the solution</p>
-            <a class="btn btn-secondary" asp-area="" asp-controller="Ticket" asp-action="OnGoingRequests"><i class="bi bi-door-closed-fill"></i> View Closed Request</a>
+            <a class="btn btn-secondary" asp-area="" asp-controller="Ticket" asp-action="AllClosedRequests"><i class="bi bi-door-closed-fill"></i> View Closed Request</a>
         </div>
     </div>
 </div>
