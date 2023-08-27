@@ -35,7 +35,7 @@ namespace TicketingApp.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User); 
             var requests = await _context.Ticket
-                .Where(req => req.CreatedById == currentUser.Id && req.StatusId != 5)
+                .Where(req => req.CreatedById == currentUser.Id && req.StatusId < 5)
                 .Include(req=>req.Category)
                 .Include(req=> req.Status)
                 .ToListAsync();
@@ -63,7 +63,33 @@ namespace TicketingApp.Controllers
         public async Task<IActionResult> OnGoingReqestsAdmin()
         {
             var requests = await _context.Ticket
-                .Where(req => req.StatusId > 1 && req.StatusId !=5)
+                .Where(req => req.StatusId > 1 && req.StatusId < 5)
+                .Include(req => req.Category)
+                .Include(req => req.Status)
+                .ToListAsync();
+
+            ViewBag.Requests = requests;
+            return View();
+        }
+
+        public async Task<IActionResult> TaskAssignedToMe()
+        {
+            var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            var requests = await _context.Ticket
+                .Where(req => req.StatusId == 2 && req.AssignedToId == currentUser.Id)
+                .Include(req => req.Category)
+                .Include(req => req.Status)
+                .ToListAsync();
+
+            ViewBag.Requests = requests;
+            return View();
+        }
+
+        public async Task<IActionResult> TaskToCloseAssignedToMe()
+        {
+            var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            var requests = await _context.Ticket
+                .Where(req => (req.StatusId == 3 || req.StatusId==4) && req.AssignedToId == currentUser.Id)
                 .Include(req => req.Category)
                 .Include(req => req.Status)
                 .ToListAsync();
@@ -77,7 +103,7 @@ namespace TicketingApp.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
             var requests = await _context.Ticket
-                .Where(req => req.CreatedById == currentUser.Id && req.StatusId == 5)
+                .Where(req => req.CreatedById == currentUser.Id && req.StatusId >= 5)
                 .Include(req => req.Category)
                 .Include(req => req.Status)
                 .ToListAsync();
@@ -433,18 +459,46 @@ namespace TicketingApp.Controllers
                         }
                                                                     
                         break;
-                    case "Reassign":
-                        ViewBag.Condition = 3;
-                                     
+                    
+                    case "Resolve": 
+                        if(ticket.StatusId !=2 && ticket.ResolutionComment.Length>0)
+                        {
+                            existingTicket.ResolutionComment = ticket.ResolutionComment;
+                            existingTicket.ResolvedDateTime = DateTime.Now;
+                            existingTicket.StatusId = ticket.StatusId;
+                            _context.SaveChanges();
+                        }
+                                               
+
                         break;
-                    case "Resolve":
-                        ViewBag.Condition = 4;
+                    case "Reassign":                        
+                        existingTicket.AssignedToId = ticket.AssignedToId;
+                        existingTicket.StatusId = 2;
+                        existingTicket.AssignedById = currentUser.Id;
+                        existingTicket.AssignedDateTime = DateTime.Now;
+                        existingTicket.ResolutionComment = null;
+                        existingTicket.ResolvedDateTime = null;
+                        _context.SaveChanges();
+
                         break;
-                    case "Can't Resolve":
-                        ViewBag.Condition = 5;
+                    case "Close as Not Resolvable":                     
+                        existingTicket.ClosedById = currentUser.Id;
+                        existingTicket.StatusId = 1001; //Note: later it need to change to 6 :1001 is due to current id in database
+                        existingTicket.ClosedDateTime = DateTime.Now;
+                        existingTicket.ClosingComment = ticket.ClosingComment;
+                        _context.SaveChanges();
                         break;
                     case "Close":
-                        ViewBag.Condition = 6;
+                        if (ticket.StatusId != 3 && ticket.ClosingComment.Length > 0)
+                        {
+                            existingTicket.ClosedById = currentUser.Id;
+                            existingTicket.StatusId = 5;
+                            existingTicket.ClosedDateTime = DateTime.Now;
+                            existingTicket.ClosingComment = ticket.ClosingComment;
+                            _context.SaveChanges();
+
+                        }
+                        
                         break;
                     default:
                         ViewBag.Condition = 0;

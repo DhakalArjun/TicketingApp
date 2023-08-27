@@ -18,7 +18,10 @@ namespace TicketingApp.Models
         public DateTime? ResolvedDateTime { get; set; }
         public DateTime? ClosedDateTime { get; set; }
         public string? TicketAttachement { get; set; }
+        [Display(Name = "Resolution Description")]
         public string? ResolutionComment { get; set; }
+        [Display(Name = "Closing Description")]
+
         public string? ClosingComment { get; set; }
 
 

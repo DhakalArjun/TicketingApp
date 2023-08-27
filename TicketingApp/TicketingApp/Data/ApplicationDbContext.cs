@@ -33,8 +33,9 @@ namespace TicketingApp.Data
                 new TicketStatus { StatusId = 1, Status = "Not assigned" },
                 new TicketStatus { StatusId = 2, Status = "Assigned" },
                 new TicketStatus { StatusId = 3, Status = "Resolved" },
-                new TicketStatus { StatusId = 4, Status = "Resolved & Closed" },
-                new TicketStatus { StatusId = 5, Status = "Not Resolvable & Closed" }
+                new TicketStatus { StatusId = 4, Status = "Not Resolvable" },
+                new TicketStatus { StatusId = 5, Status = "Resolved & Closed" },
+                new TicketStatus { StatusId = 6, Status = "Not Resolvable & Closed" }
                 );
             builder.Entity<TicketCategory>().HasData(
                 new TicketCategory { CategoryId = 1, Category = "IT Service", SubCategory = "Desktop Support - OS service pack upgrade" },

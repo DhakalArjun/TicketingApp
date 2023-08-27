@@ -8,85 +8,87 @@
 <div class="row">
     <div class="col-12">
         <form asp-action="EditTicket" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="d-flex justify-content-between mb-2">
-                <div class="col-md-3">
-                    <label class="form-label">Created Date</label>
-                    <input class="form-control text-dark" value="@Model.CreatedDateTime.ToString("yyyy-MM-dd hh:mm tt")" disabled>
-                </div>
-                @{
-                    string tktAssignTo = "";
-                    string tktAssignBy = "";
-                    string tktCreatedBy = "";
-                    if (Model.AssignedTo != null)
-                    {
-                        tktCreatedBy = string.Concat(Model.CreatedBy.FirstName, " ", Model.CreatedBy.LastName);
-                    }
+            <div class="mt-4 border border-2 rounded-1 border-info p-2">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="d-flex justify-content-between mb-2">
+                    <div class="col-md-3">
+                        <label class="form-label">Created Date</label>
+                        <input class="form-control text-dark" value="@Model.CreatedDateTime.ToString("yyyy-MM-dd hh:mm tt")" disabled>
+                    </div>
+                    @{
+                        string tktAssignTo = "";
+                        string tktAssignBy = "";
+                        string tktCreatedBy = "";
+                        if (Model.AssignedTo != null)
+                        {
+                            tktCreatedBy = string.Concat(Model.CreatedBy.FirstName, " ", Model.CreatedBy.LastName);
+                        }
 
-                    if (Model.AssignedTo != null)
-                    {
-                        tktAssignTo = string.Concat(Model.AssignedTo.FirstName, " ", Model.AssignedTo.LastName);
+                        if (Model.AssignedTo != null)
+                        {
+                            tktAssignTo = string.Concat(Model.AssignedTo.FirstName, " ", Model.AssignedTo.LastName);
+                        }
+                        if (Model.AssignedBy != null)
+                        {
+                            tktAssignBy = string.Concat(Model.AssignedBy.FirstName, " ", Model.AssignedBy.LastName);
+                        }
                     }
-                    if (Model.AssignedBy != null)
-                    {
-                        tktAssignBy = string.Concat(Model.AssignedBy.FirstName, " ", Model.AssignedBy.LastName);
-                    }
-                }
-                <div class="col-md-4">
-                    <label class="form-label">Created By</label>
-                    <input class="form-control text-dark" value="@tktCreatedBy" disabled>
+                    <div class="col-md-4">
+                        <label class="form-label">Created By</label>
+                        <input class="form-control text-dark" value="@tktCreatedBy" disabled>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Location</label>
+                        <input class="form-control text-dark" value="@Model.Location.Location" disabled>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label">Location</label>
-                    <input class="form-control text-dark" value="@Model.Location.Location" disabled>
+                <div class="d-flex justify-content-between mb-2">
+                    <div class="col-md-3">
+                        <label class="form-label">Service</label>
+                        <input class="form-control text-dark" value="@Model.Category.Category" disabled>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Category</label>
+                        <input class="form-control text-dark" value="@Model.Category.SubCategory" disabled>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Priority</label>
+                        <input class="form-control text-dark" value="@Model.Priority.TktPriority" disabled>
+                    </div>
                 </div>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-                <div class="col-md-3">
-                    <label class="form-label">Service</label>
-                    <input class="form-control text-dark" value="@Model.Category.Category" disabled>
+                <div class="form-group mb-4">
+                    <label class="control-label">Title</label>
+                    <input asp-for="@Model.Title" class="form-control text-dark"  value="@Model.Title" readonly/>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label">Category</label>
-                    <input class="form-control text-dark" value="@Model.Category.SubCategory" disabled>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Priority</label>
-                    <input class="form-control text-dark" value="@Model.Priority.TktPriority" disabled>
-                </div>
-            </div>
-            <div class="form-group mb-4">
-                <label class="control-label">Title</label>
-                <input asp-for="@Model.Title" class="form-control text-dark"  value="@Model.Title" readonly/>
-            </div>
 
-            <div class="form-group mb-2">
-                <label asp-for="@Model.Description" class="control-label"></label>
-                <textarea asp-for="@Model.Description" class="form-control text-dark" style="height:100px" value="@Model.Description" readonly></textarea>
-                <span asp-validation-for="@Model.Description" class="text-danger"></span>
-            </div>
-            <div class="my-3">
-                <label class="form-label">Attachement</label>
-                <input asp-for="TicketAttachement" class="form-control" value="@Model.TicketAttachement"/>
-            </div>
+                <div class="form-group mb-2">
+                    <label asp-for="@Model.Description" class="control-label"></label>
+                    <textarea asp-for="@Model.Description" class="form-control text-dark" style="height:100px" value="@Model.Description" readonly></textarea>
+                    <span asp-validation-for="@Model.Description" class="text-danger"></span>
+                </div>
+                <div class="my-3">
+                    <label class="form-label">Attachement</label>
+                    <input asp-for="TicketAttachement" class="form-control" value="@Model.TicketAttachement" readonly/>
+                </div>
 
-            @*Hidden fields*@
-            <input type="hidden" asp-for="TicketId" value="@Model.TicketId"/>     
-            <input type="hidden" asp-for="CategoryId" value="@Model.CategoryId" />
-            <input type="hidden" asp-for="LocationId" value="@Model.LocationId" />
-            <input type="hidden" asp-for="PriorityId" value="@Model.PriorityId" />
-            <input type="hidden" asp-for="CreatedById" value="@Model.CreatedById"/>
-            <input type="hidden" asp-for="CreatedDateTime" value="@Model.CreatedDateTime" />
+                @*Hidden fields*@
+                <input type="hidden" asp-for="TicketId" value="@Model.TicketId"/>     
+                <input type="hidden" asp-for="CategoryId" value="@Model.CategoryId" />
+                <input type="hidden" asp-for="LocationId" value="@Model.LocationId" />
+                <input type="hidden" asp-for="PriorityId" value="@Model.PriorityId" />
+                <input type="hidden" asp-for="CreatedById" value="@Model.CreatedById"/>
+                <input type="hidden" asp-for="CreatedDateTime" value="@Model.CreatedDateTime" />
 
 
                       
-            <input type="hidden" asp-for="ResolvedDateTime" value="@Model.ResolvedDateTime" />
-            <input type="hidden" asp-for="ClosedDateTime" value="@Model.ClosedDateTime" />
+                <input type="hidden" asp-for="ResolvedDateTime" value="@Model.ResolvedDateTime" />
+                <input type="hidden" asp-for="ClosedDateTime" value="@Model.ClosedDateTime" />
 
-            @{
-                int condition = 2;
-                int subCond = 1;
-            }
+                @{
+                    int condition = 4;
+                    int subCond = 1;
+                }
+            </div>
 
             <div class="form-group mt-4">
 
@@ -99,7 +101,7 @@
                 @*2. if Admin and not assigned - can assign*@
                 @if(Model.StatusId != 1) //not assigned
                 {
-                    <div class="d-flex justify-content-between mb-2">
+                    <div class="d-flex justify-content-between mb-2 mt-4 border border-2 rounded-1 border-info p-2">
                         <div class="col-md-3">
                             <label class="form-label">Assigned To</label>
                             <input class="form-control text-dark" value="@string.Concat(Model.AssignedTo.FirstName, " ", Model.AssignedTo.LastName)" disabled>
@@ -111,14 +113,13 @@
                         <div class="col-md-4">
                             <label class="form-label">Assigned By</label>
                             <input class="form-control text-dark" value="@tktAssignBy" disabled>
-                        </div>
+                        </div>                       
                     </div>
                     
                 }else{
                     if (User.IsInRole("Admin"))
                     {
-                        <hr />
-                        <div class="col-sm-6 col-md-3 mb-2">
+                        <div class="col-sm-6 col-md-3 mb-2 mt-4 border border-2 rounded-1 border-info p-2">
                             <label asp-for="AssignedToId" for="floatingSelect" class="mb-2">Assign Task To</label>
                             <select asp-for="AssignedToId" class="form-select" aria-label="Floating label select example">
                                 <option value="">Select an Agent/Manger</option>
@@ -129,8 +130,7 @@
                             </select>
                             <span asp-validation-for="AssignedToId" class="text-danger"></span>
                             <input type="hidden" asp-for="AssignedDateTime" value="@DateTime.Now" />
-                            <input type="hidden" asp-for="AssignedById" value="@ViewBag.CurUserId" />
-                            
+                            <input type="hidden" asp-for="AssignedById" value="@ViewBag.CurUserId" />                            
                         </div>
                         <input type="submit" value="Assign" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
                     }
@@ -141,22 +141,86 @@
                 {
                     <input type="submit" value="Reassign" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
                 }
-                @*4. if Agent - this task is assign to him and can resolve*@
-                @if (condition == 4 && subCond == 1)
+                @*4. if Agent - this task is assign to him and can or can't resolve*@
+                @if (Model.StatusId > 2)//not resolved
                 {
-                    <input type="submit" value="Resolve" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
-                }
+                    <div class="d-flex justify-content-between mb-2 mt-4 border border-2 rounded-1 border-info p-2">
+                        <div class="col-md-3">
+                            <div class="">
+                                <label class="form-label">Resolution Status</label>
+                                <input class="form-control text-dark" value="@Model.Status.Status" readonly>
+                            </div>
+                            <div class="">
+                                <label class="form-label">Resolution Date</label>
+                                <input class="form-control text-dark" value="@Model.ResolvedDateTime" readonly>
+                            </div>
+                        </div>
 
-                @*5. if Agent  -this task is assign to him and can declear un resolved able *@
-                @if (condition == 5 && subCond == 1)
+                        <div class="col-md-8" >
+                            <label class="form-label">Resolution Description</label>
+                            <textarea asp-for="@Model.ResolutionComment" class="form-control text-dark" style="height:6.5rem" value="@Model.ResolutionComment" readonly></textarea>
+                            
+                        </div>
+                    </div>                   
+
+                }
+                else if (Model.StatusId == 2 && Model.AssignedToId == ViewBag.CurUserId)
                 {
-                    <input type="submit" value="Can't Resolve" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
-                }
-
+                    <div class="mb-2 mt-4 border border-2 rounded-1 border-info p-2">
+                        <div class="d-flex justify-content-between ">                        
+                            <div class="col-md-3 ">
+                                <label class="form-label ">Resolution Status</label><br/>
+                                <label class="form-check-label"><input type="radio" asp-for="StatusId" value="3" class="form-check-input mx-2 mb-2"/> Resolved</label><br/>
+                                <label class="form-check-label"><input type="radio" asp-for="StatusId" value="4" class="form-check-input mx-2"/> Declare Not Resolved</label><br />
+                            </div>
+                            <div class="col-md-8">                           
+                                <label asp-for="@Model.ResolutionComment" class="control-label"></label>
+                                <textarea asp-for="@Model.ResolutionComment" class="form-control bg-light" style="height: 100px"></textarea>
+                                <span asp-validation-for="@Model.ResolutionComment" class="text-danger"></span>                            
+                            </div>                        
+                        </div>
+                        <input type="submit" value="Resolve" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
+                    </div>
+                }               
+                @*5. if Admin - task assign to one agent declare not resolvable - reassign or close as it is  *@              
+                @if (Model.StatusId == 4 && User.IsInRole("Admin"))//not resolved
+                {
+                    
+                    <div class="mb-2 mt-4 border border-2 rounded-1 border-info p-2">
+                        <div class="col-md-6 d-flex">
+                            <label asp-for="AssignedToId" for="floatingSelect" class="mb-2" style="width:12rem">Reassign Task To</label>
+                            <select asp-for="AssignedToId" class="form-select mx-2" aria-label="Floating label select example">
+                                <option value="">Select an Agent/Manger</option>
+                                @foreach (var item in @ViewBag.AgentOrManager)
+                                {
+                                    @if(item.Id != Model.AssignedToId)
+                                    {
+                                        <option value="@item.Id">@string.Concat(item.FirstName, " ", item.LastName)</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="AssignedToId" class="text-danger"></span>
+                            <input type="hidden" asp-for="AssignedDateTime" value="@DateTime.Now" />
+                            <input type="hidden" asp-for="AssignedById" value="@ViewBag.CurUserId" />
+                            <input type="submit" value="Reassign" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
+                        </div>
+                        <hr class="fs-4 text-info mx-4 "/>   
+                        <p class="text-center mb-2"> OR Close - As Not Resolvable</p> 
+                            <label asp-for="@Model.ClosingComment" class="control-label mb-1"></label>
+                            <textarea asp-for="@Model.ClosingComment" class="form-control bg-light" style="height: 75px"></textarea>
+                            <span asp-validation-for="@Model.ClosingComment" class="text-danger"></span>                            
+                            <input type="submit" value="Close as Not Resolvable" class="btn btn-primary mr-2 mt-2" style="height:2.5rem" name="submitButton" />
+                    </div> 
+                }  
                 @*6. if Admin - resolved then can close*@
-                @if (condition == 6 && subCond == 1)
+                @if (Model.StatusId == 3 && User.IsInRole("Admin"))//resolved
                 {
-                    <input type="submit" value="Close" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
+                    <div class="mb-2 mt-4 border border-2 rounded-1 border-info p-2">                      
+                        <label asp-for="@Model.ClosingComment" class="control-label mb-1"></label>
+                        <textarea asp-for="@Model.ClosingComment" class="form-control bg-light" style="height: 75px"></textarea>
+                        <span asp-validation-for="@Model.ClosingComment" class="text-danger"></span>
+                        <input type="submit" value="Close" class="btn btn-primary mr-2 mt-2" style="width:7rem" name="submitButton" />
+                    </div>
                 }
                 
             </div>
