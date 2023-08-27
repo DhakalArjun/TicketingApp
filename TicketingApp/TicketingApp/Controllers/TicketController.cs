@@ -443,11 +443,8 @@ namespace TicketingApp.Controllers
                 var existingTicket = _context.Ticket.Find(ticket.TicketId);
                 var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 switch (submitButton)
-                {
-                    case "Modify":
-                        ViewBag.Conditon = 1;
-                        break;
-                    case "Assign":
+                {                 
+                    case "Assign": //task assignment
                         if(ticket.AssignedToId != null)
                         {
                             existingTicket.AssignedToId = ticket.AssignedToId;
@@ -455,23 +452,18 @@ namespace TicketingApp.Controllers
                             existingTicket.AssignedById = currentUser.Id;
                             existingTicket.AssignedDateTime = DateTime.Now;                           
                             _context.SaveChanges();
-
-                        }
-                                                                    
-                        break;
-                    
-                    case "Resolve": 
+                        }                                                                    
+                        break;                    
+                    case "Save": //Resolution
                         if(ticket.StatusId !=2 && ticket.ResolutionComment.Length>0)
                         {
                             existingTicket.ResolutionComment = ticket.ResolutionComment;
                             existingTicket.ResolvedDateTime = DateTime.Now;
                             existingTicket.StatusId = ticket.StatusId;
                             _context.SaveChanges();
-                        }
-                                               
-
+                        } 
                         break;
-                    case "Reassign":                        
+                    case "Reassign":   //task reassignment                     
                         existingTicket.AssignedToId = ticket.AssignedToId;
                         existingTicket.StatusId = 2;
                         existingTicket.AssignedById = currentUser.Id;
@@ -479,16 +471,15 @@ namespace TicketingApp.Controllers
                         existingTicket.ResolutionComment = null;
                         existingTicket.ResolvedDateTime = null;
                         _context.SaveChanges();
-
                         break;
-                    case "Close as Not Resolvable":                     
+                    case "Close as Not Resolvable":    //request close although unresolved                  
                         existingTicket.ClosedById = currentUser.Id;
                         existingTicket.StatusId = 1001; //Note: later it need to change to 6 :1001 is due to current id in database
                         existingTicket.ClosedDateTime = DateTime.Now;
                         existingTicket.ClosingComment = ticket.ClosingComment;
                         _context.SaveChanges();
                         break;
-                    case "Close":
+                    case "Close":   //request closed after resolution
                         if (ticket.StatusId != 3 && ticket.ClosingComment.Length > 0)
                         {
                             existingTicket.ClosedById = currentUser.Id;
@@ -496,91 +487,14 @@ namespace TicketingApp.Controllers
                             existingTicket.ClosedDateTime = DateTime.Now;
                             existingTicket.ClosingComment = ticket.ClosingComment;
                             _context.SaveChanges();
-
-                        }
-                        
+                        }                        
                         break;
                     default:
-                        ViewBag.Condition = 0;
+                        //code for default - will never happlen
                         break;
                 }
-
-            }
-            var agentOrManager = await (from u in _context.Users
-                                        join ur in _context.UserRoles
-                                        on u.Id equals ur.UserId
-                                        join r in _context.Roles
-                                        on ur.RoleId equals r.Id
-                                        select new
-                                        {
-                                            u.Id,
-                                            u.UserName,
-                                            u.FirstName,
-                                            u.LastName,
-                                            r.Name,
-                                        })
-                                      .Where(r => r.Name == "Agent" || r.Name == "Admin" || r.Name == "Manager")
-                                      .ToListAsync();
-            ViewBag.AgentOrManager = agentOrManager;
-            var category = await _context.TicketCategories.FindAsync(ticket.CategoryId);
-            ticket.Category = category;
-            var priority = await _context.TicketPriorities.FindAsync(ticket.PriorityId);
-            ticket.Priority = priority;
-            var location = await _context.TicketLocations.FindAsync(ticket.LocationId);
-            ticket.Location = location;
-            var status = await _context.TicketStatuses.FindAsync(ticket.StatusId);
-            ticket.Status = status;
-            if (ticket.CreatedById != null)
-            {
-                var createdBy = await _userManager.FindByIdAsync(ticket.CreatedById);
-                ticket.CreatedBy = createdBy;
-            }
-            if (ticket.AssignedToId != null)
-            {
-                var assignTo = await _userManager.FindByIdAsync(ticket.AssignedToId);
-                ticket.AssignedTo = assignTo;
-            }
-            if (ticket.AssignedById != null)
-            {
-                var assignBy = await _userManager.FindByIdAsync(ticket.AssignedById);
-                ticket.AssignedBy = assignBy;
-            }
-            if (ticket.ClosedById != null)
-            {
-                var closedBy = await _userManager.FindByIdAsync(ticket.ClosedById);
-                ticket.ClosedBy = closedBy;
-            }
-            return View(ticket);
+            }         
+            return RedirectToAction("EditTicket", new {id = ticket.TicketId});
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }

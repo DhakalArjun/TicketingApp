@@ -13,7 +13,8 @@
                 <div class="d-flex justify-content-between mb-2">
                     <div class="col-md-3">
                         <label class="form-label">Created Date</label>
-                        <input class="form-control text-dark" value="@Model.CreatedDateTime.ToString("yyyy-MM-dd hh:mm tt")" disabled>
+                        <input class="form-control text-dark" value="@Model.CreatedDateTime.ToString("yyyy-MM-dd hh:mm tt")" disabled>                      
+                        <input asp-for="@Model.CreatedDateTime" class="form-control text-dark" value="@Model.CreatedDateTime" type="hidden">
                     </div>
                     @{
                         string tktAssignTo = "";
@@ -36,16 +37,19 @@
                     <div class="col-md-4">
                         <label class="form-label">Created By</label>
                         <input class="form-control text-dark" value="@tktCreatedBy" disabled>
+                        <input type="hidden" asp-for="CreatedById" value="@Model.CreatedById" />
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Location</label>
                         <input class="form-control text-dark" value="@Model.Location.Location" disabled>
+                        <input type="hidden" asp-for="LocationId" value="@Model.LocationId" />
                     </div>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <div class="col-md-3">
                         <label class="form-label">Service</label>
                         <input class="form-control text-dark" value="@Model.Category.Category" disabled>
+                        <input type="hidden" asp-for="CategoryId" value="@Model.CategoryId" />
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Category</label>
@@ -54,6 +58,7 @@
                     <div class="col-md-4">
                         <label class="form-label">Priority</label>
                         <input class="form-control text-dark" value="@Model.Priority.TktPriority" disabled>
+                        <input type="hidden" asp-for="PriorityId" value="@Model.PriorityId" />
                     </div>
                 </div>
                 <div class="form-group mb-4">
@@ -72,34 +77,17 @@
                 </div>
 
                 @*Hidden fields*@
-                <input type="hidden" asp-for="TicketId" value="@Model.TicketId"/>     
-                <input type="hidden" asp-for="CategoryId" value="@Model.CategoryId" />
-                <input type="hidden" asp-for="LocationId" value="@Model.LocationId" />
-                <input type="hidden" asp-for="PriorityId" value="@Model.PriorityId" />
-                <input type="hidden" asp-for="CreatedById" value="@Model.CreatedById"/>
-                <input type="hidden" asp-for="CreatedDateTime" value="@Model.CreatedDateTime" />
-
-
+                <input type="hidden" asp-for="TicketId" value="@Model.TicketId"/>  
+                @*
                       
                 <input type="hidden" asp-for="ResolvedDateTime" value="@Model.ResolvedDateTime" />
                 <input type="hidden" asp-for="ClosedDateTime" value="@Model.ClosedDateTime" />
-
-                @{
-                    int condition = 4;
-                    int subCond = 1;
-                }
+                *@
             </div>
 
             <div class="form-group mt-4">
-
-                @*1. If user and task not assigned - can be modified*@
-                @if (condition == 1 && subCond == 1)
-                {
-                    <input type="submit" value="Modify" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
-                }
-
-                @*2. if Admin and not assigned - can assign*@
-                @if(Model.StatusId != 1) //not assigned
+              
+                @if(Model.StatusId >= 2) //Request already assigned to an agent
                 {
                     <div class="d-flex justify-content-between mb-2 mt-4 border border-2 rounded-1 border-info p-2">
                         <div class="col-md-3">
@@ -114,14 +102,15 @@
                             <label class="form-label">Assigned By</label>
                             <input class="form-control text-dark" value="@tktAssignBy" disabled>
                         </div>                       
-                    </div>
-                    
-                }else{
-                    if (User.IsInRole("Admin"))
-                    {
-                        <div class="col-sm-6 col-md-3 mb-2 mt-4 border border-2 rounded-1 border-info p-2">
+                    </div>                    
+                }
+                @*Case 1. if Admin and request is not assigned - Admin or Manager can assign task to an agent/manger himself*@
+                @if (Model.StatusId == 1 && User.IsInRole("Admin"))
+                {
+                    <div class="mb-2 mt-4 border border-2 rounded-1 border-info p-2">
+                        <div class="col-md-6">
                             <label asp-for="AssignedToId" for="floatingSelect" class="mb-2">Assign Task To</label>
-                            <select asp-for="AssignedToId" class="form-select" aria-label="Floating label select example">
+                            <select asp-for="AssignedToId" class="form-select col-4" aria-label="Floating label select example">
                                 <option value="">Select an Agent/Manger</option>
                                 @foreach (var item in @ViewBag.AgentOrManager)
                                 {
@@ -130,19 +119,15 @@
                             </select>
                             <span asp-validation-for="AssignedToId" class="text-danger"></span>
                             <input type="hidden" asp-for="AssignedDateTime" value="@DateTime.Now" />
-                            <input type="hidden" asp-for="AssignedById" value="@ViewBag.CurUserId" />                            
+                            <input type="hidden" asp-for="AssignedById" value="@ViewBag.CurUserId" />
+                            <input type="submit" value="Assign" class="btn btn-primary mr-2 mt-2" style="width:7rem" name="submitButton" />
                         </div>
-                        <input type="submit" value="Assign" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
-                    }
-                }
+                    </div>
+                    
+                }             
 
-                @*3. if Admin - unresolved then can reassign to next agent or close it*@
-                @if (condition == 3 && subCond == 1)
-                {
-                    <input type="submit" value="Reassign" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
-                }
-                @*4. if Agent - this task is assign to him and can or can't resolve*@
-                @if (Model.StatusId > 2)//not resolved
+                
+                @if (Model.StatusId >=3)//If Agent already provided his resolution or completed his task
                 {
                     <div class="d-flex justify-content-between mb-2 mt-4 border border-2 rounded-1 border-info p-2">
                         <div class="col-md-3">
@@ -155,16 +140,16 @@
                                 <input class="form-control text-dark" value="@Model.ResolvedDateTime" readonly>
                             </div>
                         </div>
-
                         <div class="col-md-8" >
                             <label class="form-label">Resolution Description</label>
-                            <textarea asp-for="@Model.ResolutionComment" class="form-control text-dark" style="height:6.5rem" value="@Model.ResolutionComment" readonly></textarea>
-                            
+                            <textarea asp-for="@Model.ResolutionComment" class="form-control text-dark" style="height:6.5rem" value="@Model.ResolutionComment" readonly></textarea>                            
                         </div>
-                    </div>                   
-
+                    </div> 
                 }
-                else if (Model.StatusId == 2 && Model.AssignedToId == ViewBag.CurUserId)
+                @* Case 2 If loggedIn persion is Agent and task assinged is not complete  - Agent can resolve issue then submit as resolved
+                   Case 3 if Agent can resolve issue then submit as not resolvable *@
+
+                @if (Model.StatusId == 2 && Model.AssignedToId == ViewBag.CurUserId)
                 {
                     <div class="mb-2 mt-4 border border-2 rounded-1 border-info p-2">
                         <div class="d-flex justify-content-between ">                        
@@ -179,13 +164,34 @@
                                 <span asp-validation-for="@Model.ResolutionComment" class="text-danger"></span>                            
                             </div>                        
                         </div>
-                        <input type="submit" value="Resolve" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
+                        <input type="submit" value="Save" class="btn btn-primary mr-2" style="width:7rem" name="submitButton" />
                     </div>
-                }               
-                @*5. if Admin - task assign to one agent declare not resolvable - reassign or close as it is  *@              
-                @if (Model.StatusId == 4 && User.IsInRole("Admin"))//not resolved
+                } 
+
+                @if (Model.StatusId >= 5)//If Admin had closed the request
                 {
-                    
+                    <div class="d-flex justify-content-between mb-2 mt-4 border border-2 rounded-1 border-info p-2">
+                        <div class="col-md-3">
+                            <div class="">
+                                <label class="form-label">Request Status</label>
+                                <input class="form-control text-dark" value="@Model.Status.Status" readonly>
+                            </div>
+                            <div class="">
+                                <label class="form-label">Resolution Date</label>
+                                <input class="form-control text-dark" value="@Model.ClosedDateTime" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Closing Description</label>
+                            <textarea asp-for="@Model.ClosingComment" class="form-control text-dark" style="height:6.5rem" value="@Model.ClosingComment" readonly></textarea>
+                        </div>
+                    </div>
+                }                
+                @* Case 4 - If loggedIn person is Admin - task assign to an agent declare not resolvable - then admin can reassign it to another agent or himself
+                   Case 5 - Or admin just closed as not resolvable *@  
+                   
+                @if (Model.StatusId == 4 && User.IsInRole("Admin")) // StatusId=4 : not reasolvable
+                {                    
                     <div class="mb-2 mt-4 border border-2 rounded-1 border-info p-2">
                         <div class="col-md-6 d-flex">
                             <label asp-for="AssignedToId" for="floatingSelect" class="mb-2" style="width:12rem">Reassign Task To</label>
@@ -212,7 +218,7 @@
                             <input type="submit" value="Close as Not Resolvable" class="btn btn-primary mr-2 mt-2" style="height:2.5rem" name="submitButton" />
                     </div> 
                 }  
-                @*6. if Admin - resolved then can close*@
+                @* Case 6. if Admin - resolved then can close*@
                 @if (Model.StatusId == 3 && User.IsInRole("Admin"))//resolved
                 {
                     <div class="mb-2 mt-4 border border-2 rounded-1 border-info p-2">                      
@@ -222,7 +228,6 @@
                         <input type="submit" value="Close" class="btn btn-primary mr-2 mt-2" style="width:7rem" name="submitButton" />
                     </div>
                 }
-                
             </div>
             <div class="text-end">
             <a asp-action="" class="btn btn-secondary mr-2" style="width:7rem">Back</a>
@@ -232,24 +237,3 @@
     </div>
 </div>
 <partial name="_ValidationScriptsPartial" />
-@*
-@section Scripts {
-    <script>
-        function showComponent() {
-            var hiddenComponent = document.getElementById('hiddenTA');
-            hiddenComponent.style.display = 'block';
-        }
-    </script>
-}
-<button id="showButton" onclick="showComponent()">Show Hidden Component</button>
-
- <input type="hidden" asp-for="Status" value="@Model.Status" />
-            <input type="hidden" asp-for="Location" value="@Model.Location" />
-            <input type="hidden" asp-for="Category" value="@Model.Category" />
-            <input type="hidden" asp-for="AssignedBy" value="@Model.AssignedBy" />
-            <input type="hidden" asp-for="AssignedTo" value="@Model.AssignedTo" />
-            <input type="hidden" asp-for="ClosedBy" value="@Model.ClosedBy" />
-            <input type="hidden" asp-for="CreatedBy" value="@Model.CreatedBy" />
-*@
-
-
