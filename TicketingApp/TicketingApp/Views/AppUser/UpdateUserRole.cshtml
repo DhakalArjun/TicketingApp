@@ -29,7 +29,10 @@
                 <option value="">Select New Role</option>
                 @foreach (var item in Model.AllRoles)
                 {
-                    <option value="@item.Name">@item.Name</option>
+                    @if (!item.Name.Equals("Admin"))
+                    {
+                        <option value="@item.Name">@item.Name</option>                        
+                    }                    
                 }
             </select>
             <label asp-for="@Model.NewRole" for="floatingSelect" class="text-dark"></label>

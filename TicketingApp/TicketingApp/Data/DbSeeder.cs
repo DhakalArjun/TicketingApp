@@ -25,11 +25,11 @@ namespace TicketingApp.Data
             {
                 UserName = "admin@gmail.com",
                 Email = "admin@gmail.com",
-                FirstName = "Arjun",
-                LastName = "Dhakal",
+                FirstName = "Admin",
+                LastName = "Admin",
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true
-            };
+            };            
             var userInDb = await userManager.FindByEmailAsync(admin.Email);
             if (userInDb == null)
             {

@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
+using SendGrid.Helpers.Mail;
 using System.ComponentModel.DataAnnotations;
 using TicketingApp.Areas.Identity.Pages.Account.Manage;
 using TicketingApp.Data;
 
 namespace TicketingApp.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class AppUserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -136,6 +139,22 @@ namespace TicketingApp.Controllers
                 };                
                 return View(Input);                              
             }
+        }
+
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var usr = await _dbContext.Users.FindAsync(id);
+
+            if (usr != null)
+            {
+                var usrRole = await _userManager.GetRolesAsync(usr);
+                if(!usrRole.Equals("Admin"))
+                {
+                    _dbContext.Users.Remove(usr);
+                    await _dbContext.SaveChangesAsync();
+                } 
+            }
+            return RedirectToAction("Index");
         }
     }
 }

@@ -40,6 +40,15 @@ and monitor overall system activity
 *	Deployment on Azure 
 # [Click here to visit this Web Application](https://ticketingwebapp.azurewebsites.net/)
 
+## _Note_
+While building this application from scratch, it will seed a user with role 'Admin'  but to use 
+this application, there must be a user with 'Manager' role. To add a user with 'Manager' role
+first one need to Register and verify email by clicking the email confirmation link. Then Admin need 
+to change role of the user to role as 'Manager'.
+
+
+
+
 ## _Future Improvement_
 *   Search functionality for tickets
 *	Notification feature (if time allows)

@@ -66,8 +66,7 @@ namespace TicketingApp.Data
                 new TicketLocation { LocId = 9, Location = "Department I" },
                 new TicketLocation { LocId = 10, Location = "Department J" }
                 );
-            base.OnModelCreating( builder );
-            
+            base.OnModelCreating( builder );            
         
         }        
     }
