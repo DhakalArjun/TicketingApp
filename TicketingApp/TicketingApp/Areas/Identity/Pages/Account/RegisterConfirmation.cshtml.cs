@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using TicketingApp.Data;
+using TicketingApp.Services;
 
 namespace TicketingApp.Areas.Identity.Pages.Account
 {
@@ -19,12 +20,12 @@ namespace TicketingApp.Areas.Identity.Pages.Account
     public class RegisterConfirmationModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IEmailSender _sender;
+        private readonly IEmailService _emailService;
 
-        public RegisterConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _userManager = userManager;
-            _sender = sender;
+            _emailService = emailService;
         }
 
         /// <summary>

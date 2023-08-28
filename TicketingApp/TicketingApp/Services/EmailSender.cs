@@ -1,14 +1,16 @@
-﻿    using Microsoft.AspNetCore.Identity.UI.Services;
-    using Microsoft.Extensions.Options;
-    using SendGrid;
-    using SendGrid.Helpers.Mail;
-    using Microsoft.Extensions.Configuration;
-
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Options;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using Microsoft.Extensions.Configuration;
+using System.Net.Mail;
+using System.Net;
 
 namespace TicketingApp.Services;
 
-public class EmailSender : IEmailSender
+public class EmailSender : IEmailService
 {
+    
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
 
@@ -22,37 +24,34 @@ public class EmailSender : IEmailSender
         _configuration = configuration;
     }
 
-    public AuthMessageSenderOptions Options { get; } 
-
+    public AuthMessageSenderOptions Options { get; }
+    
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
-        var sendGridApiKey = _configuration["SendGrid:Key"];
-        if (string.IsNullOrEmpty(sendGridApiKey))
+        using (var client = new SmtpClient())
         {
-            throw new Exception("Null SendGridKey");
+            var credentials = new NetworkCredential
+            {
+                UserName = "fsd07team@gmail.com",
+                Password = "awufprfmveebjgep"
+            };
+
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.EnableSsl = true;
+            client.UseDefaultCredentials = false;
+            client.Credentials = credentials;
+
+            var emailMessage = new MailMessage
+            {
+                From = new MailAddress("fsd07team@gmail.com"),
+                Subject = subject,
+                Body = message,
+                IsBodyHtml = true
+            };
+            emailMessage.To.Add(toEmail);
+
+            await client.SendMailAsync(emailMessage);
         }
-        await Execute(sendGridApiKey, subject, message, toEmail);
     }
-
-    public async Task Execute(string apiKey, string subject, string message, string toEmail)
-    {
-        var client = new SendGridClient(apiKey);
-        var msg = new SendGridMessage()
-        {
-            From = new EmailAddress("Delara.amiri86@gmail.com", "Password Recovery"),
-            Subject = subject,
-            PlainTextContent = message,
-            HtmlContent = message
-        };
-        msg.AddTo(new EmailAddress(toEmail));
-
-        // Disable click tracking.
-        // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
-        msg.SetClickTracking(false, false);
-        var response = await client.SendEmailAsync(msg);
-        _logger.LogInformation(response.IsSuccessStatusCode
-                               ? $"Email to {toEmail} queued successfully!"
-                               : $"Failure Email to {toEmail}");
-    }
-
 }

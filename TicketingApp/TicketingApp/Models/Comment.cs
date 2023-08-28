@@ -21,7 +21,5 @@ namespace TicketingApp.Models
         public virtual Ticket CommentFor { get; set; }
         [ForeignKey("CommentById")]
         public virtual ApplicationUser CommentBy { get; set; }
-
-
     }
 }

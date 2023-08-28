@@ -1,9 +1,29 @@
 ﻿<ul class="nav nav-tabs mt-4">
     <li class="nav-item">
-        <a class="nav-link active" aria-current="page" asp-controller="Ticket" asp-action="EditTicket" asp-route-id="@Model.TicketId" style="width:10rem">Ticket Details</a>
+        <a class="nav-link active" id="detailPage" aria-current="page" asp-controller="Ticket" asp-action="EditTicket" asp-route-id="@Model.TicketId" style="width:10rem">Ticket Details</a>
 
     </li>
     <li class="nav-item">        
-        <a class="nav-link"  asp-controller="Comment" asp-action="Index" asp-route-ticketId="@Model.TicketId" style="width:10rem">View Comments</a>
+        <a class="nav-link"  id="commentPage" asp-controller="Comment" asp-action="Index" asp-route-ticketId="@Model.TicketId" style="width:10rem">View Comments</a>
     </li>
 </ul>
+<script>
+    $(document).ready(function() {
+        // Attach click event handler
+        $('#detailPage').click(function() { 
+            $(this).addClass('active');
+            $("#commentPage").removeClass('active');
+        });
+
+        $('#commentPage').click(function () {
+            $(this).addClass('active');
+            $('#DetailPage').removeClass('active');
+        });
+    });
+</script>
+
+
+
+
+
+
