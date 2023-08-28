@@ -2,7 +2,7 @@ https://johnabbott-my.sharepoint.com/:w:/g/personal/6213750_johnabbottcollege_ne
 
 2023/08/16 Delara
 Done / Not done since the last scrum:
-Created a proposal ,DB , github Repo: Done
+Created a proposal , DB , github Repo: Done
 To do until next Scrum:  fundamentals of ASP.NET Core completed
 Complete Database
 Need assistance / figure things out:
@@ -16,7 +16,6 @@ Business Roles
 2023/08/16 Debora
 1. Done / not done since last scrum:
 2. To do until next Scrum: To study fundamental of ASP.NET Core
-
 3. Need assistance / figure things out:
 
 2023/08/16 Alex
@@ -35,7 +34,7 @@ Authentication
 
 2023/08/17  Arjun
 1. Done / not done since last scrum: not complete
-2. To do until next Scrum:Continue learn ASP.NET Core
+2. To do until next Scrum: Continue learn ASP.NET Core, learn about ASP.NET Identity, Revise Database
 3. Need assistance / figure things out:
 
 2023/08/17 Mihai
@@ -55,44 +54,90 @@ start with user(model)
 2. To do until next Scrum: Create Email service and class, Account verfication, reset password
 learning about .core
 3. Need assistance / figure things out:
-Authentication
+
 
 2023/08/21  Arjun
-1. Done / not done since last scrum: fundamentals of ASP.NET Core completed
-2. To do until next Scrum: Finalize database for Application, seed data for lookup tables,  CRUD for lookup tables, create UseCase diagram and Ticket Handling Flowchart
-3. Need assistance / figure things out:
+1. Done / not done since last scrum: study of fundamentals of ASP.NET Core  and ASP.NET Identity completed
+2. To do until next Scrum: Start Implementing ASP.NET Identity, seed data for lookup tables,  CRUD for lookup tables, create UseCase diagram and Ticket Handling Flowchart
+3. Need assistance / figure things out: need to under how ticketing system works in general in real world
 
 2023/08/21 Mihai
 1. Done / not done since last scrum:  Not complete
-2. To do until next Scrum:  Continue learn ASP.NET Core
+2. To do until next Scrum:  Continue learn ASP.NET Core, learn about ASP.NET Core Identity
 3. Need assistance / figure things out:
 
 2023/08/21 Debora
 1. Done / not done since last scrum: Not complete
-2. To do until next Scrum:  Continue learn ASP.NET Core
+2. To do until next Scrum:  Continue learn ASP.NET Core, learn about ASP.NET Core Identity
 3. Need assistance / figure things out:
 
 ===============================================
 2023/08/22 Delara
 1. Done / not done since last scrum:  Completed
 start with user(model)
-2. To do until next Scrum: Admin CRUD for TicketCategories and TicketLocations, add necessary views
+2. To do until next Scrum: CRUD for Comment table - create comment controller, necessary action methods and views
 3. Need assistance / figure things out:
-Authentication
+
 
 2023/08/22  Arjun
-1. Done / not done since last scrum: fundamentals of ASP.NET Core completed
-2. To do until next Scrum: CRUD for Ticket Table, add necessary views for all, admin/manager, agent and user roles, Create database on Azure and Deploy app
+1. Done / not done since last scrum: Complete except CRUD for lookup table
+2. To do until next Scrum:  Create home page for all different roles admin/manager, agent and user roles, Create database on Azure and Deploy app
 3. Need assistance / figure things out: learn how to create database and deploy on Azure
 
 2023/08/22 Mihai
-1. Done / not done since last scrum:  Not complete
+1. Done / not done since last scrum:  ASP.NET Fundamental Complete, ASP.NET Identity - partially complete
 2. To do until next Scrum:  Continue learn ASP.NET Core, Work on Style of Registraion, login, profile pages
 3. Need assistance / figure things out:
 
 2023/08/22 Debora
-1. Done / not done since last scrum: Not complete
-2. To do until next Scrum:  Continue learn ASP.NET Core, CRUD for Comment table
+1. Done / not done since last scrum: ASP.NET Fundamental Complete, ASP.NET Identity - partially complete
+2. To do until next Scrum:  Continue learn ASP.NET Core, Admin CRUD for TicketCategories and create necessary views
 3. Need assistance / figure things out:
 
 ===============================================
+2023/08/23 Delara
+1. Done / not done since last scrum:  partially complete
+start with user(model)
+2. To do until next Scrum: Continue working on CRUD for Comment table - create comment controller, necessary action methods and views
+3. Need assistance / figure things out:
+
+
+2023/08/23  Arjun
+1. Done / not done since last scrum: fundamentals of ASP.NET Core completed
+2. To do until next Scrum: Action Methods and view for TicketController as per Ticket Handling FlowChart
+3. Need assistance / figure things out: 
+
+2023/08/23 Mihai
+1. Done / not done since last scrum:  complete
+2. To do until next Scrum:  Admin CRUD for TicketLocations and create necessary views
+3. Need assistance / figure things out:
+
+2023/08/23 Debora
+1. Done / not done since last scrum: Complete
+2. To do until next Scrum:  Admin CRUD for TicketCategories and create necessary views
+3. Need assistance / figure things out:
+===============================================
+2023/08/24 Delara
+1. Done / not done since last scrum:  Completed
+start with user(model)
+2. To do until next Scrum: Figureout issue with EmailSerive issues and git conflicts
+3. Need assistance / figure things out:
+
+
+2023/08/24  Arjun
+1. Done / not done since last scrum: Partially complete
+2. To do until next Scrum: Continue working Action Methods and view for TicketController as per Ticket Handling FlowChart
+3. Need assistance / figure things out: how to create a dynamic form with multiple submit buttons and several conditional statements
+
+2023/08/24 Mihai
+1. Done / not done since last scrum:  partially complete
+2. To do until next Scrum:  Continue working on Admin CRUD for TicketLocations and create necessary views
+3. Need assistance / figure things out:
+
+2023/08/24 Debora
+1. Done / not done since last scrum: Partially complete
+2. To do until next Scrum:   Continue working on Admin CRUD for TicketCategories and create necessary views
+3. Need assistance / figure things out:
+===============================================
+
+

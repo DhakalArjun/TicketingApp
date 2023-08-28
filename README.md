@@ -48,5 +48,5 @@ and monitor overall system activity
 ## Contributors
 * Arjun Dhakal
 * Delara Amiri
-* Debora Crrea Batista Bastos
+* Debora Correa Batista Bastos
 * Mihai Coanda
