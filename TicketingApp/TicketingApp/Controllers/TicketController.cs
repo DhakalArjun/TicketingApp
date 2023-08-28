@@ -23,18 +23,20 @@ namespace TicketingApp.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFileService _fileService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        //private readonly RoleManager<ApplicationUser> _roleManager;
-        //private readonly EmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailService _emailService;
 
 
 
-        public TicketController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IFileService fileService, IWebHostEnvironment webHostEnvironment)
+        public TicketController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IFileService fileService, IWebHostEnvironment webHostEnvironment, RoleManager<IdentityRole> roleManager, IEmailService emailService)
         {
             _context = context;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _fileService = fileService;
-            _webHostEnvironment = webHostEnvironment; 
+            _webHostEnvironment = webHostEnvironment;
+            _roleManager = roleManager;
+            _emailService = emailService;
         }
 
         //user ongoing request -- for all user
@@ -259,18 +261,26 @@ namespace TicketingApp.Controllers
                 ticket.PriorityId = vm.SelectedPriority;
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
-                /*
+                
+                //send email notification to both user and manager
                 var managerRole = await _roleManager.FindByNameAsync("Manager");
-                if(managerRole != null && currentUser !=null)
+                var managerDetails = await _userManager.GetUsersInRoleAsync(managerRole.Name);
+                var managerEmail = managerDetails.Select(m => m.Email).FirstOrDefault();
+                ticket.Category = await _context.TicketCategories.FindAsync(ticket.CategoryId);               
+                ticket.Priority = await _context.TicketPriorities.FindAsync(ticket.PriorityId);               
+                ticket.Location = await _context.TicketLocations.FindAsync(ticket.LocationId);
+                
+
+                if (managerRole != null && currentUser !=null)
                 {            
                     string subject = "New Requested Created";
-                    string messageToManager = "Hello, \nNew new requested has been created for \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\n Created By: " + currentUser.FirstName + " " + currentUser.LastName + "(" + currentUser.Email + ")" + "\nPriority: " + ticket.Priority.TktPriority;
-                    string messageToUser = "Hello, \n Your requested has been created successfully \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\nTo view the progress on your request, you can go click View Ongoing Requests";
+                    // to insert new line any of \n or \r\n or Enviroment.NewLine is working, why??
+                    string messageToManager = "Hello, " + Environment.NewLine + "New requested has been created for" + Environment.NewLine + "Service: " + ticket.Category.Category + " \r\n Category : " + ticket.Category.SubCategory + "\r\n Created By: " + currentUser.FirstName + " " + currentUser.LastName + "(" + currentUser.Email + ")" + "\r\nLocation: " + ticket.Location.Location + "\r\nPriority: " + ticket.Priority.TktPriority;
+                    string messageToUser = "Hello, \r\n Your requested has been created successfully \r\n Service: " + ticket.Category.Category + " \r\n Category : " + ticket.Category.SubCategory + "\r\nTo view the progress on your request, you can go click View Ongoing Requests";
 
-                    await _emailSender.SendEmailAsync(managerRole.Email, subject, messageToManager);
-                    await _emailSender.SendEmailAsync(currentUser.Email, subject, messageToUser);
-                }
-                */
+                    await _emailService.SendEmailAsync(managerEmail, subject, messageToManager);
+                    await _emailService.SendEmailAsync(currentUser.Email, subject, messageToUser);
+                }  
                 return RedirectToAction(nameof(OnGoingRequests));
             }
             var locations = await _context.TicketLocations.ToListAsync();
@@ -391,7 +401,7 @@ namespace TicketingApp.Controllers
                             var assignedToRole = await _roleManager.FindByIdAsync(ticket.AssignedToId);
                             string subject = "New Task Assigned";                               
                                 string message = "Hello, \n A task has been assigned to you, details of the task: \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory +  "\nPriority: " + ticket.Priority.TktPriority + "\nTo view the details of task, you can click 'View Task Just Assigned'";
-                                await _emailSender.SendEmailAsync(assignedToRole.Email, subject, message);
+                                await _emailService.SendEmailAsync(assignedToRole.Email, subject, message);
                             */
                         }                                                                    
                         break;                    
@@ -408,7 +418,7 @@ namespace TicketingApp.Controllers
                             string message2 = "Hello, \n Your requested has been fullfilled and closed. Request details was: \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\nPriority: " + ticket.Priority.TktPriority + "\nTo view the details of task, you can click 'View Task Just Assigned'";
                            
 
-                            await _emailSender.SendEmailAsync(managerRole.Email, subject2, message2);
+                            await _emailService.SendEmailAsync(managerRole.Email, subject2, message2);
                             */
                         } 
                         break;
@@ -424,7 +434,7 @@ namespace TicketingApp.Controllers
                         var assignedToRole3 = await _roleManager.FindByIdAsync(ticket.AssignedToId);
                         string subject3 = "New Task Assigned";
                         string message3 = "Hello, \n A task has been assigned to you, details of the task:  \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\nPriority: " + ticket.Priority.TktPriority + "\nTo view the details of task, you can click 'View Task Just Assigned'";
-                        await _emailSender.SendEmailAsync(assignedToRole3.Email, subject3, message3);
+                        await _emailService.SendEmailAsync(assignedToRole3.Email, subject3, message3);
                         */
                         break;
                     case "Close as Not Resolvable":    //request close although unresolved                  
@@ -437,7 +447,7 @@ namespace TicketingApp.Controllers
                         var assignedToRole4 = await _roleManager.FindByIdAsync(ticket.AssignedToId);
                         string subject4 = "Your Request is closed - issue not resolvable";
                         string message4 = "Hello, \n Your requested has been closed but unfortunately the issue cannot be closed. Request details was: \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\nPriority: " + ticket.Priority.TktPriority + "\nTo view the details of task, you can click 'View Task Just Assigned'";
-                        await _emailSender.SendEmailAsync(assignedToRole4.Email, subject4, message4);
+                        await _emailService.SendEmailAsync(assignedToRole4.Email, subject4, message4);
                         */
                         break;
 
@@ -453,7 +463,7 @@ namespace TicketingApp.Controllers
                             var assignedToRole5 = await _roleManager.FindByIdAsync(ticket.AssignedToId);
                             string subject5 = "Your Request is closed - issue resolved";
                             string message5 = "Hello, \n Your requested has been fullfilled and closed. Request details was: \n Service: " + ticket.Category.Category + " \n Category : " + ticket.Category.SubCategory + "\nPriority: " + ticket.Priority.TktPriority + "\nTo view the details of task, you can click 'View Task Just Assigned'";
-                            await _emailSender.SendEmailAsync(assignedToRole5.Email, subject5, message5);
+                            await _emailService.SendEmailAsync(assignedToRole5.Email, subject5, message5);
                             */
                         }                        
                         break;
