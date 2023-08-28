@@ -10,20 +10,14 @@
 <script>
     $(document).ready(function() {
         // Attach click event handler
-        $('#detailPage').click(function() { 
+        $('#detailPage').on("click", function() { 
             $(this).addClass('active');
             $("#commentPage").removeClass('active');
         });
 
-        $('#commentPage').click(function () {
+        $('#commentPage').on("click", function () {
             $(this).addClass('active');
             $('#DetailPage').removeClass('active');
         });
     });
 </script>
-
-
-
-
-
-
